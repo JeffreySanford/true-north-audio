@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "nx": "^22.0.2"
+  },
+  "_npx": {
+    "packages": [
+      "nx@latest"
+    ]
+  }
+}

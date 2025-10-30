@@ -30,7 +30,7 @@ export class MusicGenService {
     seed?: number
   ): Observable<{ waveform: string; sample_rate: number }> {
     return this.http
-      .post('http://localhost:3000/generate-music', {
+      .post('http://localhost:8000/generate-music', {
         genre,
         duration,
         seed,

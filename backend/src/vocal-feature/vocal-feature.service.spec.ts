@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { lastValueFrom } from 'rxjs';
 import { getModelToken } from '@nestjs/mongoose';
 import { VocalFeatureService } from './vocal-feature.service';
 
 const mockVocalFeatureModel = {
   create: jest.fn(),
-  find: jest.fn().mockReturnThis(),
-  exec: jest.fn(),
-  findById: jest.fn().mockReturnThis(),
-  findByIdAndUpdate: jest.fn().mockReturnThis(),
-  findByIdAndDelete: jest.fn().mockReturnThis(),
+  find: jest.fn(),
+  findById: jest.fn(),
+  findByIdAndUpdate: jest.fn(),
+  findByIdAndDelete: jest.fn(),
 };
 
 describe('VocalFeatureService', () => {
@@ -28,35 +28,43 @@ describe('VocalFeatureService', () => {
   });
 
   it('should create a vocal feature', async () => {
-    model.create.mockResolvedValue({ name: 'Falsetto' });
-    const result = await service.create({ name: 'Falsetto' });
+    model.create.mockReturnValue(Promise.resolve({ name: 'Falsetto' }));
+    const result = await lastValueFrom(service.create({ name: 'Falsetto' }));
     expect(result).toEqual({ name: 'Falsetto' });
     expect(model.create).toHaveBeenCalledWith({ name: 'Falsetto' });
   });
 
   it('should find all vocal features', async () => {
-    model.find.mockReturnValue({ exec: () => Promise.resolve([{ name: 'Growl' }]) });
-    const result = await service.findAll();
+    model.find.mockReturnValue({
+      exec: () => Promise.resolve([{ name: 'Growl' }])
+    });
+    const result = await lastValueFrom(service.findAll());
     expect(result).toEqual([{ name: 'Growl' }]);
   });
 
   it('should find a vocal feature by id', async () => {
-    model.findById.mockReturnValue({ exec: () => Promise.resolve({ name: 'Scream' }) });
-    const result = await service.findById('123');
+    model.findById.mockReturnValue({
+      exec: () => Promise.resolve({ name: 'Scream' })
+    });
+    const result = await lastValueFrom(service.findById('123'));
     expect(result).toEqual({ name: 'Scream' });
     expect(model.findById).toHaveBeenCalledWith('123');
   });
 
   it('should update a vocal feature', async () => {
-    model.findByIdAndUpdate.mockReturnValue({ exec: () => Promise.resolve({ name: 'Updated' }) });
-    const result = await service.update('123', { name: 'Updated' });
+    model.findByIdAndUpdate.mockReturnValue({
+      exec: () => Promise.resolve({ name: 'Updated' })
+    });
+    const result = await lastValueFrom(service.update('123', { name: 'Updated' }));
     expect(result).toEqual({ name: 'Updated' });
     expect(model.findByIdAndUpdate).toHaveBeenCalledWith('123', { name: 'Updated' }, { new: true });
   });
 
   it('should delete a vocal feature', async () => {
-    model.findByIdAndDelete.mockReturnValue({ exec: () => Promise.resolve({ name: 'Deleted' }) });
-    const result = await service.delete('123');
+    model.findByIdAndDelete.mockReturnValue({
+      exec: () => Promise.resolve({ name: 'Deleted' })
+    });
+    const result = await lastValueFrom(service.delete('123'));
     expect(result).toEqual({ name: 'Deleted' });
     expect(model.findByIdAndDelete).toHaveBeenCalledWith('123');
   });

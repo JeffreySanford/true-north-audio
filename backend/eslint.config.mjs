@@ -1,37 +1,53 @@
-import { flat } from '@nx/eslint-plugin';
 
-export default flat([
+import nxPlugin from '@nx/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
+import tsEslintPlugin from '@typescript-eslint/eslint-plugin';
+import prettierPlugin from 'eslint-plugin-prettier';
+
+export default [
   {
     files: ['*.ts', '*.tsx'],
-    plugins: ['@nx'],
-    extends: [
-      'plugin:@nx/typescript',
-      'plugin:@nx/nest',
-      'plugin:@nx/angular',
-      'plugin:@nx/mongo',
-      'plugin:@typescript-eslint/recommended',
-      'prettier'
-    ],
+    plugins: {
+      '@nx': nxPlugin,
+      '@typescript-eslint': tsEslintPlugin,
+      'prettier': prettierPlugin,
+    },
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+    },
     rules: {
+      '@nx/enforce-module-boundaries': 'error',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      'prettier/prettier': 'warn',
       // Add custom rules here
-    }
+    },
   },
   {
     files: ['*.js', '*.jsx'],
-    plugins: ['@nx'],
-    extends: [
-      'plugin:@nx/javascript',
-      'prettier'
-    ],
+    plugins: {
+      '@nx': nxPlugin,
+      'prettier': prettierPlugin,
+    },
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
     rules: {
+      '@nx/enforce-module-boundaries': 'error',
+      'no-unused-vars': 'warn',
+      'prettier/prettier': 'warn',
       // Add custom rules here
-    }
+    },
   },
   {
     files: ['*.html'],
-    extends: ['plugin:@nx/angular/template'],
     rules: {
       // Add custom rules here
-    }
-  }
-]);
+    },
+  },
+];

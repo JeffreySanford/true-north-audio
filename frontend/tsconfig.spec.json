@@ -2,12 +2,13 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/jest",
-    "module": "commonjs",
-    "target": "es2016",
-    "types": ["jest", "node"],
-    "moduleResolution": "node10"
+  "target": "es2016",
+  "types": ["jest", "node"],
+  "lib": ["es2020"],
+  "module": "nodenext",
+  "moduleResolution": "nodenext"
   },
-  "files": ["src/test-setup.ts"],
+  "files": ["src/test-setup.ts", "src/app/app.ts", "src/app/main-page.ts"],
   "include": [
     "jest.config.ts",
     "src/**/*.test.ts",

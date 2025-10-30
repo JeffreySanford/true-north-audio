@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { lastValueFrom } from 'rxjs';
 import { getModelToken } from '@nestjs/mongoose';
 import { GenreService } from './genre.service';
 
 const mockGenreModel = {
   create: jest.fn(),
-  find: jest.fn().mockReturnThis(),
-  exec: jest.fn(),
-  findById: jest.fn().mockReturnThis(),
-  findByIdAndUpdate: jest.fn().mockReturnThis(),
-  findByIdAndDelete: jest.fn().mockReturnThis(),
+  find: jest.fn(),
+  findById: jest.fn(),
+  findByIdAndUpdate: jest.fn(),
+  findByIdAndDelete: jest.fn(),
 };
 
 describe('GenreService', () => {
@@ -28,35 +28,49 @@ describe('GenreService', () => {
   });
 
   it('should create a genre', async () => {
-    model.create.mockResolvedValue({ name: 'Rock' });
-    const result = await service.create({ name: 'Rock' });
+    model.create.mockReturnValue({
+      then: (cb: any) => { setTimeout(() => cb({ name: 'Rock' }), 0); return { catch: () => {} }; }
+    });
+    const result = await lastValueFrom(service.create({ name: 'Rock' }));
     expect(result).toEqual({ name: 'Rock' });
     expect(model.create).toHaveBeenCalledWith({ name: 'Rock' });
   });
 
   it('should find all genres', async () => {
-    model.find.mockReturnValue({ exec: () => Promise.resolve([{ name: 'Jazz' }]) });
-    const result = await service.findAll();
+    model.find.mockReturnValue({
+      exec: () => Promise.resolve([{ name: 'Jazz' }])
+    });
+    const result = await lastValueFrom(service.findAll());
     expect(result).toEqual([{ name: 'Jazz' }]);
   });
 
   it('should find a genre by id', async () => {
-    model.findById.mockReturnValue({ exec: () => Promise.resolve({ name: 'Pop' }) });
-    const result = await service.findById('123');
+    model.findById.mockReturnValue({
+      exec: () => Promise.resolve({ name: 'Pop' })
+    });
+    const result = await lastValueFrom(service.findById('123'));
     expect(result).toEqual({ name: 'Pop' });
     expect(model.findById).toHaveBeenCalledWith('123');
   });
 
   it('should update a genre', async () => {
-    model.findByIdAndUpdate.mockReturnValue({ exec: () => Promise.resolve({ name: 'Updated' }) });
-    const result = await service.update('123', { name: 'Updated' });
+    model.findByIdAndUpdate.mockReturnValue({
+      exec: () => ({
+        then: (cb: any) => { setTimeout(() => cb({ name: 'Updated' }), 0); return { catch: () => {} }; }
+      })
+    });
+    const result = await lastValueFrom(service.update('123', { name: 'Updated' }));
     expect(result).toEqual({ name: 'Updated' });
     expect(model.findByIdAndUpdate).toHaveBeenCalledWith('123', { name: 'Updated' }, { new: true });
   });
 
   it('should delete a genre', async () => {
-    model.findByIdAndDelete.mockReturnValue({ exec: () => Promise.resolve({ name: 'Deleted' }) });
-    const result = await service.delete('123');
+    model.findByIdAndDelete.mockReturnValue({
+      exec: () => ({
+        then: (cb: any) => { setTimeout(() => cb({ name: 'Deleted' }), 0); return { catch: () => {} }; }
+      })
+    });
+    const result = await lastValueFrom(service.delete('123'));
     expect(result).toEqual({ name: 'Deleted' });
     expect(model.findByIdAndDelete).toHaveBeenCalledWith('123');
   });

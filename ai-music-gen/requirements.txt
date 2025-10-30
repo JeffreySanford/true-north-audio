@@ -1,2 +1,5 @@
 mido
 psutil
+fastapi
+uvicorn
+numpy

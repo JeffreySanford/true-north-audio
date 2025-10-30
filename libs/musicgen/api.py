@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
-from musicgen import generate_music
+from libs.musicgen import generate_music
 import numpy as np
 import base64
 

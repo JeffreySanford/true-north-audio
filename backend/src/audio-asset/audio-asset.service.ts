@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AudioAsset } from '../models/audio-asset.model';
-import { Subject } from 'rxjs';
+import { Subject, ReplaySubject } from 'rxjs';
 
 
 /**
@@ -15,11 +15,6 @@ import { Subject } from 'rxjs';
  */
 @Injectable()
 export class AudioAssetService {
-  private createSubject = new Subject<AudioAsset>();
-  private findAllSubject = new Subject<AudioAsset[]>();
-  private findByIdSubject = new Subject<AudioAsset | null>();
-  private updateSubject = new Subject<AudioAsset | null>();
-  private deleteSubject = new Subject<AudioAsset | null>();
 
   /**
    * Injects the AudioAsset Mongoose model.
@@ -34,9 +29,14 @@ export class AudioAssetService {
    */
   create(data: Partial<AudioAsset>) {
     this.audioAssetModel.create(data)
-      .then(result => this.createSubject.next(result))
-      .catch(err => this.createSubject.error(err));
-    return this.createSubject.asObservable();
+    const subject = new ReplaySubject(1);
+    this.audioAssetModel.create(data)
+      .then(result => {
+        subject.next(result);
+        subject.complete();
+      })
+      .catch(err => subject.error(err));
+    return subject.asObservable();
   }
 
   /**
@@ -45,9 +45,14 @@ export class AudioAssetService {
    */
   findAll() {
     this.audioAssetModel.find().populate('genre').populate('vocalFeatures').exec()
-      .then(result => this.findAllSubject.next(result))
-      .catch(err => this.findAllSubject.error(err));
-    return this.findAllSubject.asObservable();
+    const subject = new ReplaySubject(1);
+    this.audioAssetModel.find().populate('genre').populate('vocalFeatures').exec()
+      .then(result => {
+        subject.next(result);
+        subject.complete();
+      })
+      .catch(err => subject.error(err));
+    return subject.asObservable();
   }
 
   /**
@@ -57,9 +62,14 @@ export class AudioAssetService {
    */
   findById(id: string) {
     this.audioAssetModel.findById(id).populate('genre').populate('vocalFeatures').exec()
-      .then(result => this.findByIdSubject.next(result))
-      .catch(err => this.findByIdSubject.error(err));
-    return this.findByIdSubject.asObservable();
+    const subject = new ReplaySubject(1);
+    this.audioAssetModel.findById(id).populate('genre').populate('vocalFeatures').exec()
+      .then(result => {
+        subject.next(result);
+        subject.complete();
+      })
+      .catch(err => subject.error(err));
+    return subject.asObservable();
   }
 
   /**
@@ -70,9 +80,14 @@ export class AudioAssetService {
    */
   update(id: string, data: Partial<AudioAsset>) {
     this.audioAssetModel.findByIdAndUpdate(id, data, { new: true }).exec()
-      .then(result => this.updateSubject.next(result))
-      .catch(err => this.updateSubject.error(err));
-    return this.updateSubject.asObservable();
+    const subject = new ReplaySubject(1);
+    this.audioAssetModel.findByIdAndUpdate(id, data, { new: true }).exec()
+      .then(result => {
+        subject.next(result);
+        subject.complete();
+      })
+      .catch(err => subject.error(err));
+    return subject.asObservable();
   }
 
   /**
@@ -82,8 +97,13 @@ export class AudioAssetService {
    */
   delete(id: string) {
     this.audioAssetModel.findByIdAndDelete(id).exec()
-      .then(result => this.deleteSubject.next(result))
-      .catch(err => this.deleteSubject.error(err));
-    return this.deleteSubject.asObservable();
+    const subject = new ReplaySubject(1);
+    this.audioAssetModel.findByIdAndDelete(id).exec()
+      .then(result => {
+        subject.next(result);
+        subject.complete();
+      })
+      .catch(err => subject.error(err));
+    return subject.asObservable();
   }
 }

@@ -6,6 +6,7 @@ import { MusicGenService, MusicGenResult } from './musicgen.service';
   templateUrl: './main-page.html',
   styleUrls: ['./main-page.scss'],
   animations: [],
+  standalone: false
 })
 export class MainPageComponent {
   title = 'True North Audio';

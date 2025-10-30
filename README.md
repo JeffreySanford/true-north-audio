@@ -77,8 +77,23 @@ This repository is an Nx monorepo for a local-first, AI-powered music maker appl
 
 ## Getting Started
 1. Install dependencies: `pnpm install`
-2. Run frontend: `nx serve frontend`
-3. Run backend: `nx serve backend`
+2. Install Angular Material (required for frontend UI):
+	- At workspace root: `pnpm add -w @angular/material @angular/cdk`
+	- If you see EPERM or permission errors, close all editors/servers, ensure write access, and retry. You may need to run as administrator.
+3. Run frontend: `nx serve frontend`
+4. Run backend: `nx serve backend`
+
+## Nx Scripts
+You can run tasks for individual projects or all at once:
+- Lint: `pnpm lint:backend`, `pnpm lint:frontend`, `pnpm lint:all`
+- Build: `pnpm build:backend`, `pnpm build:frontend`, `pnpm build:all`
+- Serve: `pnpm serve:backend`, `pnpm serve:frontend`, `pnpm serve:all`
+- Test: `pnpm test:backend`, `pnpm test:frontend`, `pnpm test:all`
+
+## Frontend Notes
+- All Angular Material components used in the UI must be imported in `AppModule` (see `src/app/app-module.ts`).
+- `FormsModule` is required for `ngModel` support.
+- If you see errors about unknown Material elements or `ngModel`, check your module imports and that Material/CDK are installed.
 
 ## Documentation
 See `/docs` for detailed guides on architecture, features, and usage.

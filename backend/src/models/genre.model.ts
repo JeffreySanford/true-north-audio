@@ -5,7 +5,7 @@ export interface Genre extends Document {
   description?: string;
 }
 
-const GenreSchema = new Schema<Genre>({
+export const GenreSchema = new Schema<Genre>({
   name: { type: String, required: true, unique: true },
   description: { type: String },
 });

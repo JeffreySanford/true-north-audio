@@ -7,7 +7,7 @@ export interface AudioAsset extends Document {
   filePath: string;
 }
 
-const AudioAssetSchema = new Schema<AudioAsset>({
+export const AudioAssetSchema = new Schema<AudioAsset>({
   title: { type: String, required: true },
   genre: { type: Schema.Types.ObjectId, ref: 'Genre', required: true },
   vocalFeatures: [{ type: Schema.Types.ObjectId, ref: 'VocalFeature' }],

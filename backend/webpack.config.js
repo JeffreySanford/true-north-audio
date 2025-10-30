@@ -9,6 +9,16 @@ module.exports = {
       devtoolModuleFilenameTemplate: '[absolute-resource-path]',
     }),
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+        exclude: /node_modules/,
+      },
+    ],
+  },
   plugins: [
     new NxAppWebpackPlugin({
       target: 'node',
@@ -21,5 +31,11 @@ module.exports = {
       generatePackageJson: true,
       sourceMaps: true,
     }),
+  ],
+  ignoreWarnings: [
+    {
+      module: /node_modules\/.*\.js$/,
+      message: /Failed to parse source map/,
+    },
   ],
 };

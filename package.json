@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "serve:fastapi": "set PYTHONPATH=. && python -m libs.musicgen.api",
-    "serve:all": "pnpm lint:all && pnpm build:all && pnpm test:all && pnpm serve:fastapi && nx run-many --target=serve --all",
+    "serve:all": "pnpm lint:all && pnpm build:all && pnpm test:all && concurrently \"pnpm serve:fastapi\" \"nx run backend:serve\" \"nx run frontend:serve --proxy-config=src/proxy.conf.json\"",
     "lint:backend": "nx run backend:lint",
     "lint:frontend": "nx run frontend:lint",
     "lint:backend-e2e": "nx run backend-e2e:lint",
@@ -21,9 +21,10 @@
     "test:frontend": "nx run frontend:test",
     "test:backend-e2e": "nx run backend-e2e:test",
     "test:frontend-e2e": "nx run frontend-e2e:test",
-    "lint:all": "nx run-many --target=lint --all",
+  "lint:all": "nx run backend:lint && nx run frontend:lint && nx run backend-e2e:lint && nx run frontend-e2e:lint",
     "build:all": "nx run-many --target=build --all",
-    "test:all": "nx run-many --target=test --all"
+    "test:all": "nx run-many --target=test --all",
+  "clean:all": "nx reset && rm -rf dist .nx node_modules/.cache coverage **/dist **/.next **/.turbo && echo 'Workspace cleaned.' && pnpm install && (python3.10 -m venv .venv && .venv/Scripts/activate && pip install -r requirements.txt || echo 'Python 3.10 not found, please install it for Magenta support.')"
   },
   "private": true,
   "devDependencies": {
@@ -59,6 +60,7 @@
     "@typescript-eslint/parser": "^8.46.2",
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^20.3.0",
+    "concurrently": "^9.2.1",
     "eslint": "^9.8.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-playwright": "^1.6.2",
@@ -68,6 +70,7 @@
     "jest-environment-node": "^29.7.0",
     "jest-preset-angular": "~14.6.1",
     "jest-util": "^29.7.0",
+    "mongodb-memory-server": "^10.2.3",
     "nx": "22.0.2",
     "prettier": "^2.6.2",
     "ts-jest": "^29.1.0",

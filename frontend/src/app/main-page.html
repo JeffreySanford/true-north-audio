@@ -1,8 +1,5 @@
+
 <div class="main-page-container mat-mdc-elevation-z8">
-  <header class="main-header">
-    <h1 class="main-title">{{ title }}</h1>
-    <h2 class="main-subtitle">{{ subtitle }}</h2>
-  </header>
   <section class="main-content">
     <mat-card class="musicgen-card mat-elevation-z8 animate-fade-in">
       <mat-card-header>
@@ -15,16 +12,46 @@
         <form class="musicgen-form" (ngSubmit)="generateMusic()">
           <mat-form-field appearance="outline" color="accent">
             <mat-label>Genre</mat-label>
-            <input matInput [(ngModel)]="genre" name="genre" required />
+            <mat-select [(ngModel)]="genre" name="genre" required>
+              <mat-option value="ambient">Ambient</mat-option>
+              <mat-option value="rock">Rock</mat-option>
+              <mat-option value="pop">Pop</mat-option>
+              <mat-option value="jazz">Jazz</mat-option>
+              <mat-option value="electronic">Electronic</mat-option>
+            </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" color="accent">
-            <mat-label>Duration (seconds)</mat-label>
-            <input matInput type="number" [(ngModel)]="duration" name="duration" required min="1" />
-          </mat-form-field>
+          <!-- Duration label handled by aria-label on slider -->
+            <mat-slider min="1" max="60" step="1" aria-label="Duration (seconds)">
+              <input matSliderThumb [(ngModel)]="duration" name="duration" />
+            </mat-slider>
           <mat-form-field appearance="outline" color="accent">
             <mat-label>Seed (optional)</mat-label>
             <input matInput type="number" [(ngModel)]="seed" name="seed" />
           </mat-form-field>
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label>Idea / Prompt (optional)</mat-label>
+            <input matInput type="text" [(ngModel)]="idea" name="idea" />
+          </mat-form-field>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Advanced Options
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-form-field appearance="outline" color="accent">
+              <mat-label>Variation</mat-label>
+              <mat-select>
+                <mat-option value="original">Original</mat-option>
+                <mat-option value="remix">Remix</mat-option>
+                <mat-option value="vocal">Vocal</mat-option>
+                <mat-option value="instrumental">Instrumental</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!-- Tempo label handled by aria-label on slider -->
+              <mat-slider min="60" max="180" step="1" aria-label="Tempo">
+                <input matSliderThumb [(ngModel)]="tempo" name="tempo" />
+              </mat-slider>
+          </mat-expansion-panel>
           <button mat-raised-button color="accent" class="animated-btn animate-bounce" type="submit" [disabled]="loading">
             <mat-icon *ngIf="!loading">music_note</mat-icon>
             <mat-progress-spinner *ngIf="loading" diameter="24" mode="indeterminate" color="primary"></mat-progress-spinner>
@@ -51,7 +78,25 @@
       <mat-card-content>
         <p>Enjoy Material Design 3 colors, smooth animations, and a clear, modern UI.</p>
         <p>Start creating vibrant music and video assets with AI-powered tools.</p>
+        <div class="badge-list">
+          <span class="mat-badge mat-badge-primary">Material Design 3</span>
+          <span class="mat-badge mat-badge-accent">Angular</span>
+          <span class="mat-badge mat-badge-warn">AI Music</span>
+          <span class="mat-badge mat-badge-primary">Video (Planned)</span>
+          <span class="mat-badge mat-badge-accent">Remix</span>
+        </div>
       </mat-card-content>
     </mat-card>
   </section>
+    <div class="side-container">
+      <h2>Music Player & Vocals</h2>
+      <div class="music-player-controls">
+        <!-- TODO: Add actual audio player controls here -->
+        <audio id="musicgen-audio" controls></audio>
+      </div>
+      <div class="vocals-transcription">
+        <h3>Vocal Transcription</h3>
+        <div id="vocals-output">(No vocals yet)</div>
+      </div>
+    </div>
 </div>

@@ -16,6 +16,7 @@ export class MusicGenService {
 
   /**
    * Request music generation from the Python FastAPI service.
+   * Endpoint: POST http://localhost:8000/api/musicgen/generate
    * @param genre Music genre (e.g., 'ambient', 'rock')
    * @param duration Duration in seconds
    * @param seed Optional random seed for reproducibility
@@ -30,11 +31,11 @@ export class MusicGenService {
     seed?: number
   ): Observable<{ waveform: string; sample_rate: number }> {
     return this.http
-      .post('http://localhost:8000/generate-music', {
+      .post('http://localhost:8000/api/musicgen/generate', {
         genre,
         duration,
         seed,
       })
-      .pipe(map((response: any) => response.data));
+      .pipe(map((response: { data: { waveform: string; sample_rate: number } }) => response.data));
   }
 }

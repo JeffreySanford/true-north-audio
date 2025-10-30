@@ -1,0 +1,71 @@
+
+footer.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #f7e8ff 0%, #e3ffe8 100%);
+  color: #222;
+  border-radius: 16px;
+  border: 2px solid #00bcd4;
+  box-shadow: 0 -4px 16px rgba(0,188,212,0.08);
+  position: relative;
+  font-size: 1rem;
+  margin: 0 0 12px 0;
+  animation: footerFadeIn 1.2s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes footerFadeIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.footer-right {
+  display: flex;
+  align-items: center;
+}
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 4px;
+  box-shadow: 0 1px 4px rgba(0,188,212,0.18);
+  transition: box-shadow 0.3s, background 0.3s;
+}
+.status-dot.connected {
+  animation: pulseConnected 1.2s infinite alternate;
+}
+.status-dot.disconnected {
+  animation: pulseDisconnected 1.2s infinite alternate;
+}
+
+@keyframes pulseConnected {
+  from { box-shadow: 0 0 8px #4caf50; }
+  to { box-shadow: 0 0 16px #4caf50; }
+}
+@keyframes pulseDisconnected {
+  from { box-shadow: 0 0 8px #f44336; }
+  to { box-shadow: 0 0 16px #f44336; }
+}
+
+.latency {
+  min-width: 40px;
+  text-align: right;
+  font-size: 0.95em;
+  margin-right: 12px;
+}
+.date-time {
+  font-size: 0.95em;
+  font-family: monospace;
+}

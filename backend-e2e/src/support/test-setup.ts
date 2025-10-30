@@ -1,4 +1,4 @@
-/* eslint-disable */
+// test-setup.ts
 import axios from 'axios';
 
 module.exports = async function () {

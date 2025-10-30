@@ -8,11 +8,17 @@
   "module": "nodenext",
   "moduleResolution": "nodenext"
   },
-  "files": ["src/test-setup.ts", "src/app/app.ts", "src/app/main-page.ts"],
+  "files": [
+    "src/test-setup.ts",
+    "src/app/app.ts",
+    "src/app/main-page.ts",
+    "src/app/header.ts"
+  ],
   "include": [
     "jest.config.ts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "src/app/header.ts"
   ]
 }

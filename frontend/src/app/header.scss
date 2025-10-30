@@ -1,0 +1,119 @@
+header.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: linear-gradient(90deg, #e3ffe8 0%, #f7e8ff 100%);
+  color: #222;
+  border-radius: 16px;
+  border: 2px solid #7c4dff;
+  box-shadow: 0 4px 16px rgba(124,77,255,0.08);
+  position: relative;
+  margin: 12px 0 0 0;
+  animation: headerFadeIn 1.2s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes headerFadeIn {
+  from { opacity: 0; transform: translateY(-24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.logo {
+  width: 88px;
+  height: 88px;
+  border-radius: 19px;
+  box-shadow: 0 2px 8px rgba(124,77,255,0.18);
+  transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+  object-fit: contain;
+  vertical-align: middle;
+}
+.logo:hover {
+  transform: scale(1.08) rotate(-2deg);
+}
+.header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.header-text h1 {
+  margin: 0;
+  font-size: 1.7rem;
+  background: linear-gradient(90deg, #7c4dff 0%, #00bcd4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.header-text span {
+  font-size: 1.08rem;
+  color: #7c4dff;
+  font-weight: 500;
+}
+.header-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.user-icon {
+  cursor: pointer;
+  font-size: 2rem;
+  color: #7c4dff;
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s;
+}
+.user-icon:hover {
+  color: #00bcd4;
+}
+.user-menu {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  min-width: 220px;
+  background: linear-gradient(90deg, #e3ffe8 0%, #f7e8ff 100%);
+  color: #222;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(124,77,255,0.18);
+  z-index: 100;
+  padding: 16px 12px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1.5px solid #7c4dff;
+  animation: menuFadeIn 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+@keyframes menuFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.user-info {
+  border-bottom: 1px solid #7c4dff;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+.username, .realname {
+  font-size: 1em;
+  margin-bottom: 2px;
+}
+.user-actions button {
+  width: 100%;
+  margin-bottom: 4px;
+  color: #7c4dff;
+  font-weight: 600;
+  background: linear-gradient(90deg, #e3ffe8 0%, #f7e8ff 100%);
+  border: 1px solid #7c4dff;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+}
+.user-actions button:hover {
+  color: #fff;
+  background: linear-gradient(90deg, #7c4dff 0%, #00bcd4 100%);
+}

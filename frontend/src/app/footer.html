@@ -1,0 +1,13 @@
+<footer class="footer">
+  <div class="footer-left">
+    <span>API:</span>
+    <span [ngClass]="apiStatusColor" class="status-icon"></span>
+    <span class="latency">{{ apiLatency }}ms</span>
+    <span>MongoDB:</span>
+    <span [ngClass]="dbStatusColor" class="status-icon"></span>
+    <span class="latency">{{ dbLatency }}ms</span>
+  </div>
+  <div class="footer-right">
+    <span class="date-time">{{ dateTime }}</span>
+  </div>
+</footer>

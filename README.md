@@ -64,12 +64,21 @@ This repository is an Nx monorepo for a local-first, AI-powered music maker appl
 - `/apps/frontend-e2e` - Frontend E2E tests
 - `/apps/backend-e2e` - Backend E2E tests
 
-## Development Principles
-- Always use Nx CLI for tasks
-- Prefer data streams and WebSockets over Promises
-- Use non-standalone Angular components
-- Strict TypeScript and linting standards
-- Modular, extensible, and cloud-ready
+## Coding Standards & Requirements
+- Always use Nx CLI for all build, lint, test, serve, and e2e tasks (never use underlying tooling directly)
+- Use non-standalone Angular components (standalone: false)
+- All Angular Material components must be imported in AppModule
+- Use RxJS data streams and WebSockets for frontend-backend communication; avoid Promises for app data
+- Strict TypeScript: no implicit any, no unused variables, no inferrable type annotations
+- Strict linting: ESLint, Prettier, and Angular style guides enforced
+- Modular Nx workspace: shared libraries for DTOs/types, clear separation of apps/libs
+- Backend: NestJS, MongoDB (Mongoose ODM), in-memory MongoDB for dev/test (mongodb-memory-server)
+- Frontend: Angular Material Design 3, vibrant UI, clear browser console logging for all initialization stages
+- Connection status indicator in footer (red/yellow/green/black)
+- Abstracted header and footer components (declared in AppModule)
+- All endpoints documented in backend/API_ENDPOINTS.md
+- Hardware: optimized for local-first (i7/i9 CPUs, NVIDIA GPUs), cloud-ready
+- All new features and endpoints must be documented and tested
 
 ## Hardware & Deployment
 - Optimized for local use on i7/i9 CPUs, NVIDIA GPUs
@@ -90,9 +99,15 @@ You can run tasks for individual projects or all at once:
 - Serve: `pnpm serve:backend`, `pnpm serve:frontend`, `pnpm serve:all`
 - Test: `pnpm test:backend`, `pnpm test:frontend`, `pnpm test:all`
 
+
 ## Frontend Notes
 - All Angular Material components used in the UI must be imported in `AppModule` (see `src/app/app-module.ts`).
 - `FormsModule` is required for `ngModel` support.
+- The main page uses a vibrant, animated Material Design 3 layout, with:
+	- `mat-card`, `mat-form-field`, `mat-select`, `mat-slider`, `mat-expansion-panel`, `mat-chip-list`, and more
+	- Advanced options for music generation (genre, duration, seed, variation, tempo)
+	- Future extensibility for video, remix, vocal/instrumental, and more
+	- All UI fits between header and footer, with responsive and stylish design
 - If you see errors about unknown Material elements or `ngModel`, check your module imports and that Material/CDK are installed.
 
 ## Documentation

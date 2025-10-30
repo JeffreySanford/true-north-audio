@@ -1,0 +1,67 @@
+// Legendary global styles and Material theme overrides
+html, body {
+	min-height: 100vh;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto', 'Montserrat', Arial, sans-serif;
+	background: linear-gradient(120deg, #e3ffe8 0%, #f7e8ff 100%);
+	overflow: hidden;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+// Glassmorphism effect for legendary look
+.legendary-glass {
+	background: rgba(255,255,255,0.7);
+	box-shadow: 0 8px 32px rgba(124,77,255,0.18);
+	border-radius: 2rem;
+	border: 1px solid rgba(124,77,255,0.12);
+	backdrop-filter: blur(12px);
+}
+
+// Responsive tweaks for main-page-container
+.main-page-container {
+	min-height: 100vh;
+	height: 100vh;
+	max-width: 100vw;
+	overflow-y: visible;
+	padding: 16px 0 16px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+	.main-page-container {
+		padding: 4px 0 4px 0;
+	}
+	.musicgen-card, .welcome-card {
+		max-width: 98vw;
+		border-radius: 1rem;
+		padding: 0.5rem;
+	}
+}
+
+// Legendary animated background
+.legendary-bg {
+	position: fixed;
+	top: 0; left: 0; width: 100vw; height: 100vh;
+	z-index: -1;
+	background: radial-gradient(circle at 20% 20%, #ff6f91 0%, transparent 60%),
+							radial-gradient(circle at 80% 80%, #7c4dff 0%, transparent 60%),
+							linear-gradient(120deg, #e3ffe8 0%, #f7e8ff 100%);
+	animation: legendaryBgMove 12s linear infinite alternate;
+}
+
+@keyframes legendaryBgMove {
+	0% { background-position: 0% 0%, 100% 100%, 0% 0%; }
+	100% { background-position: 100% 100%, 0% 0%, 100% 100%; }
+}

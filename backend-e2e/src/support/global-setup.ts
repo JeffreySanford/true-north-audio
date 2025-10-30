@@ -1,7 +1,7 @@
 import { waitForPortOpen } from '@nx/node/utils';
 
-/* eslint-disable */
-var __TEARDOWN_MESSAGE__: string;
+// global-setup.ts
+// Use globalThis for teardown message, no need for var/let/const
 
 module.exports = async function () {
   // Start services that that the app needs to run (e.g. database, docker-compose, etc.).

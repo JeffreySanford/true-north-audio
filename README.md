@@ -39,52 +39,47 @@ These targets are either [inferred automatically](https://nx.dev/concepts/inferr
 
 To version and release the library use
 
-```
-npx nx release
-```
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+# True North Audio: Nx Monorepo Music Maker
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## Overview
+This repository is an Nx monorepo for a local-first, AI-powered music maker application. It is designed to run independently on modern hardware (i7/i9 CPUs, NVIDIA GPUs) and is extensible for future cloud deployment (e.g., DigitalOcean).
 
-## Keep TypeScript project references up to date
+### Key Features
+- **Frontend:** Angular (Material Design 3), non-standalone components, RxJS data streams
+- **Backend:** NestJS, MongoDB (Mongoose ODM), WebSocket streaming, RBAC user management
+- **Audio/AI:** Local model integration (Ollama, etc.), scalable genre/vocal feature support
+- **Video:** Initial planning for video asset management and processing
+- **User Management:** Role-based access control (RBAC), no OAuth yet
+- **Nx Workspace:** Modular structure, shared libraries for DTOs/types, strict coding standards
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+## Project Structure
+- `/apps/frontend` - Angular UI
+- `/apps/backend` - NestJS API server
+- `/libs/shared` - Shared types, DTOs
+- `/libs/audio` - Audio logic
+- `/libs/video` - Video logic (planned)
+- `/libs/data-access` - Data models/services
+- `/libs/ui` - Angular UI components
+- `/apps/frontend-e2e` - Frontend E2E tests
+- `/apps/backend-e2e` - Backend E2E tests
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
+## Development Principles
+- Always use Nx CLI for tasks
+- Prefer data streams and WebSockets over Promises
+- Use non-standalone Angular components
+- Strict TypeScript and linting standards
+- Modular, extensible, and cloud-ready
 
-```sh
-npx nx sync
-```
+## Hardware & Deployment
+- Optimized for local use on i7/i9 CPUs, NVIDIA GPUs
+- Easy migration to cloud (DigitalOcean, Docker)
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+## Getting Started
+1. Install dependencies: `pnpm install`
+2. Run frontend: `nx serve frontend`
+3. Run backend: `nx serve backend`
 
-```sh
-npx nx sync:check
-```
+## Documentation
+See `/docs` for detailed guides on architecture, features, and usage.
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)

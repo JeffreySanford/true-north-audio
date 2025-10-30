@@ -1,0 +1,57 @@
+<div class="main-page-container mat-mdc-elevation-z8">
+  <header class="main-header">
+    <h1 class="main-title">{{ title }}</h1>
+    <h2 class="main-subtitle">{{ subtitle }}</h2>
+  </header>
+  <section class="main-content">
+    <mat-card class="musicgen-card mat-elevation-z8 animate-fade-in">
+      <mat-card-header>
+        <mat-card-title>
+          <span class="main-title-gradient">AI Music Generator</span>
+        </mat-card-title>
+        <mat-card-subtitle>Expressive, vibrant, and fun!</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="musicgen-form" (ngSubmit)="generateMusic()">
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label>Genre</mat-label>
+            <input matInput [(ngModel)]="genre" name="genre" required />
+          </mat-form-field>
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label>Duration (seconds)</mat-label>
+            <input matInput type="number" [(ngModel)]="duration" name="duration" required min="1" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" color="accent">
+            <mat-label>Seed (optional)</mat-label>
+            <input matInput type="number" [(ngModel)]="seed" name="seed" />
+          </mat-form-field>
+          <button mat-raised-button color="accent" class="animated-btn animate-bounce" type="submit" [disabled]="loading">
+            <mat-icon *ngIf="!loading">music_note</mat-icon>
+            <mat-progress-spinner *ngIf="loading" diameter="24" mode="indeterminate" color="primary"></mat-progress-spinner>
+            {{ loading ? 'Generating...' : 'Generate Music' }}
+          </button>
+        </form>
+        <mat-divider></mat-divider>
+        <div *ngIf="result" class="result-card animate-slide-in">
+          <mat-icon color="primary">check_circle</mat-icon>
+          <span class="result-title">Music generated!</span>
+          <div class="result-details">
+            <span>Sample rate: <strong>{{ result.sample_rate }}</strong></span>
+            <span>Waveform (base64): <span class="waveform-preview">{{ result.waveform | slice:0:32 }}...</span></span>
+          </div>
+        </div>
+        <div *ngIf="error" class="error-message animate-shake">
+          <mat-icon color="warn">error</mat-icon>
+          {{ error }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="welcome-card mat-elevation-z4 animate-fade-in">
+      <mat-card-title class="main-title-gradient">Welcome to True North Audio</mat-card-title>
+      <mat-card-content>
+        <p>Enjoy Material Design 3 colors, smooth animations, and a clear, modern UI.</p>
+        <p>Start creating vibrant music and video assets with AI-powered tools.</p>
+      </mat-card-content>
+    </mat-card>
+  </section>
+</div>

@@ -6,28 +6,100 @@
         <mat-card-title>
           <span class="main-title-gradient">AI Music Generator</span>
         </mat-card-title>
+        <div style="margin-top: 12px;"></div>
         <mat-card-subtitle>Expressive, vibrant, and fun!</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         <form class="musicgen-form" (ngSubmit)="generateMusic()">
-          <mat-form-field appearance="outline" color="accent">
-            <mat-label>Genre</mat-label>
-            <mat-select [(ngModel)]="genre" name="genre" required>
-              <mat-option value="ambient">Ambient</mat-option>
-              <mat-option value="rock">Rock</mat-option>
-              <mat-option value="pop">Pop</mat-option>
-              <mat-option value="jazz">Jazz</mat-option>
-              <mat-option value="electronic">Electronic</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Duration label handled by aria-label on slider -->
-            <mat-slider min="1" max="60" step="1" aria-label="Duration (seconds)">
-              <input matSliderThumb [(ngModel)]="duration" name="duration" />
-            </mat-slider>
-          <mat-form-field appearance="outline" color="accent">
-            <mat-label>Seed (optional)</mat-label>
-            <input matInput type="number" [(ngModel)]="seed" name="seed" />
-          </mat-form-field>
+          <div style="display: flex; gap: 1em; margin-top: 1em;">
+            <mat-form-field appearance="outline" color="accent" style="flex: 1;" class="genre-dropdown">
+              <mat-label>Genre</mat-label>
+              <mat-select [(ngModel)]="genre" name="genre" required>
+                <mat-option value="ambient">Ambient</mat-option>
+                <mat-option value="rock">Rock</mat-option>
+                <mat-option value="pop">Pop</mat-option>
+                <mat-option value="jazz">Jazz</mat-option>
+                <mat-option value="electronic">Electronic</mat-option>
+                <mat-option value="bigband">Big Band</mat-option>
+                <mat-option value="1940s">1940s/50s</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" color="accent" style="flex: 1;">
+              <mat-label>Vocal Artist</mat-label>
+              <mat-select [(ngModel)]="vocal_artist" name="vocal_artist">
+                <mat-option value="none">None</mat-option>
+                <mat-option value="AI_Male_1">AI Male 1</mat-option>
+                <mat-option value="AI_Male_2">AI Male 2</mat-option>
+                <mat-option value="AI_Female_1">AI Female 1</mat-option>
+                <mat-option value="AI_Female_2">AI Female 2</mat-option>
+                <mat-option value="AI_Choir">AI Choir</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="seed-duration-row">
+            <div class="duration-col">
+              <label for="duration-slider" class="duration-label">Duration (seconds)</label>
+              <mat-slider id="duration-slider" min="8" max="180" step="1" tickInterval="30" aria-label="Duration (seconds)">
+                <input matSliderThumb [(ngModel)]="duration" name="duration" />
+              </mat-slider>
+              <div class="duration-ticks">
+                <span>8</span>
+                <span>30</span>
+                <span>60</span>
+                <span>120</span>
+                <span>180</span>
+              </div>
+            </div>
+            <mat-form-field appearance="outline" color="accent" class="seed-col">
+              <mat-label>Seed (optional)</mat-label>
+              <input matInput type="number" [(ngModel)]="seed" name="seed" />
+            </mat-form-field>
+          </div>
+          <!-- Multi-section Song Structure UI -->
+          <div class="song-structure-section">
+            <h3 style="margin-top: 1.5em;">Song Structure</h3>
+            <div *ngFor="let section of songSections; let i = index" class="song-section-row" style="display: flex; gap: 1em; align-items: center; margin-bottom: 0.5em;">
+              <mat-form-field appearance="outline" color="accent" style="flex: 2;">
+                <mat-label>Section Type</mat-label>
+                <mat-select [(ngModel)]="section.type" [name]="'sectionType' + i" required>
+                  <mat-option value="verse">Verse</mat-option>
+                  <mat-option value="chorus">Chorus</mat-option>
+                  <mat-option value="bridge">Bridge</mat-option>
+                  <mat-option value="intro">Intro</mat-option>
+                  <mat-option value="outro">Outro</mat-option>
+                  <mat-option value="solo">Solo</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" color="accent" style="flex: 1;">
+                <mat-label>Duration (sec)</mat-label>
+                <input matInput type="number" min="4" max="180" [(ngModel)]="section.duration" [name]="'sectionDuration' + i" required />
+              </mat-form-field>
+              <mat-form-field appearance="outline" color="accent" style="flex: 2;">
+                <mat-label>Transition</mat-label>
+                <mat-select [(ngModel)]="section.transition" [name]="'sectionTransition' + i">
+                  <mat-option value="none">None</mat-option>
+                  <mat-option value="fade">Fade</mat-option>
+                  <mat-option value="cut">Cut</mat-option>
+                  <mat-option value="drum_fill">Drum Fill</mat-option>
+                  <mat-option value="sfx">SFX</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <button mat-icon-button color="warn" aria-label="Remove section" (click)="removeSection(i)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <button mat-stroked-button color="accent" type="button" (click)="addSection()" style="margin-bottom: 1em;">
+              <mat-icon>add</mat-icon> Add Section
+            </button>
+            <div *ngIf="songSections.length > 0" class="song-structure-summary" style="margin-bottom: 1em;">
+              <strong>Current Structure:</strong>
+              <ul>
+                <li *ngFor="let section of songSections; let i = index">
+                  {{ i + 1 }}. {{ section.type | titlecase }} ({{ section.duration }}s) <span *ngIf="section.transition && section.transition !== 'none'">→ {{ section.transition | titlecase }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
           <mat-form-field appearance="outline" color="accent">
             <mat-label>Idea / Prompt (optional)</mat-label>
             <input matInput type="text" [(ngModel)]="idea" name="idea" />
@@ -38,19 +110,30 @@
                 Advanced Options
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <mat-form-field appearance="outline" color="accent">
-              <mat-label>Variation</mat-label>
-              <mat-select>
-                <mat-option value="original">Original</mat-option>
-                <mat-option value="remix">Remix</mat-option>
-                <mat-option value="vocal">Vocal</mat-option>
-                <mat-option value="instrumental">Instrumental</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <!-- Tempo label handled by aria-label on slider -->
-              <mat-slider min="60" max="180" step="1" aria-label="Tempo">
-                <input matSliderThumb [(ngModel)]="tempo" name="tempo" />
-              </mat-slider>
+            <div style="display: flex; gap: 1em; align-items: flex-end;">
+              <mat-form-field appearance="outline" color="accent" style="flex: 1;">
+                <mat-label>Variation</mat-label>
+                <mat-select [(ngModel)]="variation" name="variation">
+                  <mat-option value="original">Original</mat-option>
+                  <mat-option value="remix">Remix</mat-option>
+                  <mat-option value="vocal">Vocal</mat-option>
+                  <mat-option value="instrumental">Instrumental</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div style="flex: 2;">
+                <label for="tempo-slider" style="font-weight: 500; margin-bottom: 0.5em; display: block;">Tempo (BPM)</label>
+                <mat-slider id="tempo-slider" min="60" max="180" step="1" tickInterval="30" aria-label="Tempo">
+                  <input matSliderThumb [(ngModel)]="tempo" name="tempo" />
+                </mat-slider>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: #888;">
+                  <span>60</span>
+                  <span>90</span>
+                  <span>120</span>
+                  <span>150</span>
+                  <span>180</span>
+                </div>
+              </div>
+            </div>
           </mat-expansion-panel>
           <button mat-raised-button color="accent" class="animated-btn animate-bounce" type="submit" [disabled]="loading">
             <mat-icon *ngIf="!loading">music_note</mat-icon>
@@ -63,8 +146,35 @@
           <mat-icon color="primary">check_circle</mat-icon>
           <span class="result-title">Music generated!</span>
           <div class="result-details">
-            <span>Sample rate: <strong>{{ result.sample_rate }}</strong></span>
-            <span>Waveform (base64): <span class="waveform-preview">{{ result.waveform | slice:0:32 }}...</span></span>
+            <span><mat-icon color="primary">speed</mat-icon> Sample rate: <strong>{{ result.sample_rate }}</strong></span>
+            <span><mat-icon color="accent">graphic_eq</mat-icon> Waveform (base64): <span class="waveform-preview">{{ result.waveform | slice:0:32 }}...</span></span>
+            <span *ngIf="result.audio_url">
+              <mat-icon color="primary">library_music</mat-icon>
+              <button mat-stroked-button color="primary" (click)="playMp3()">
+                <mat-icon>play_arrow</mat-icon> Listen MP3
+              </button>
+              <a [href]="result.audio_url" download>
+                <mat-icon>download</mat-icon> Download MP3
+              </a>
+            </span>
+            <span>
+              <mat-icon color="accent">music_note</mat-icon>
+              <button mat-stroked-button color="accent" (click)="playWav()">
+                <mat-icon>play_arrow</mat-icon> Listen WAV
+              </button>
+              <button mat-stroked-button color="accent" (click)="downloadWav()">
+                <mat-icon>download</mat-icon> Download WAV
+              </button>
+            </span>
+            <span>
+              <mat-icon color="warn">volume_up</mat-icon>
+              <button mat-stroked-button color="warn" (click)="playDirect()">
+                <mat-icon>play_arrow</mat-icon> Web Audio API
+              </button>
+              <button mat-stroked-button color="warn" (click)="stopDirect()">
+                <mat-icon>stop</mat-icon> Stop
+              </button>
+            </span>
           </div>
         </div>
         <div *ngIf="error" class="error-message animate-shake">
@@ -91,8 +201,16 @@
     <div class="side-container">
       <h2>Music Player & Vocals</h2>
       <div class="music-player-controls">
-        <!-- TODO: Add actual audio player controls here -->
-        <audio id="musicgen-audio" controls></audio>
+          <audio id="musicgen-audio" controls>
+            <source *ngIf="result?.audio_url && !audioUrlNotFound" [src]="result?.audio_url" type="audio/mp3">
+          </audio>
+        <button mat-stroked-button color="primary" (click)="playDirect()">Play (Web Audio API)</button>
+        <button mat-stroked-button color="accent" (click)="stopDirect()">Stop</button>
+          <!-- Video playback removed, only audio for MP3 -->
+        <div *ngIf="audioUrlNotFound" class="audio-url-warning">
+          <mat-icon color="warn">warning</mat-icon>
+          Audio file not found. Please use the in-memory player above.
+        </div>
       </div>
       <div class="vocals-transcription">
         <h3>Vocal Transcription</h3>

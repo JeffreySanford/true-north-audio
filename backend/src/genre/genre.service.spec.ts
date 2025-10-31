@@ -29,7 +29,7 @@ describe('GenreService', () => {
 
   it('should create a genre', async () => {
     model.create.mockReturnValue({
-      then: (cb: any) => { setTimeout(() => cb({ name: 'Rock' }), 0); return { catch: () => {} }; }
+  then: (cb: (genre: { name: string }) => void) => { setTimeout(() => cb({ name: 'Rock' }), 0); return { catch: () => {} }; }
     });
     const result = await lastValueFrom(service.create({ name: 'Rock' }));
     expect(result).toEqual({ name: 'Rock' });
@@ -56,7 +56,7 @@ describe('GenreService', () => {
   it('should update a genre', async () => {
     model.findByIdAndUpdate.mockReturnValue({
       exec: () => ({
-        then: (cb: any) => { setTimeout(() => cb({ name: 'Updated' }), 0); return { catch: () => {} }; }
+  then: (cb: (genre: { name: string }) => void) => { setTimeout(() => cb({ name: 'Updated' }), 0); return { catch: () => {} }; }
       })
     });
     const result = await lastValueFrom(service.update('123', { name: 'Updated' }));
@@ -67,7 +67,7 @@ describe('GenreService', () => {
   it('should delete a genre', async () => {
     model.findByIdAndDelete.mockReturnValue({
       exec: () => ({
-        then: (cb: any) => { setTimeout(() => cb({ name: 'Deleted' }), 0); return { catch: () => {} }; }
+  then: (cb: (genre: { name: string }) => void) => { setTimeout(() => cb({ name: 'Deleted' }), 0); return { catch: () => {} }; }
       })
     });
     const result = await lastValueFrom(service.delete('123'));

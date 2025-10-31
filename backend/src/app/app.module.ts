@@ -1,3 +1,5 @@
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -10,6 +12,7 @@ import { SeedService } from './seed.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GenreSchema } from '../models/genre.model';
 import { AudioAssetSchema } from '../models/audio-asset.model';
+import { OlammaLogSchema } from '../models/olamma-log.model';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -27,11 +30,16 @@ const mongooseModule =
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'backend/src/assets/generated'),
+      serveRoot: '/audio/generated',
+    }),
     HttpModule,
     mongooseModule,
     MongooseModule.forFeature([
       { name: 'Genre', schema: GenreSchema },
       { name: 'AudioAsset', schema: AudioAssetSchema },
+      { name: 'OlammaLog', schema: OlammaLogSchema },
     ]),
   ],
   controllers: [AppController, MusicGenController, GenreController],

@@ -1,22 +1,26 @@
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
-# General Guidelines for working with Nx
 
-- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e. `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
-- You have access to the Nx MCP server and its tools, use them to help the user
-- When answering questions about the repository, use the `nx_workspace` tool first to gain an understanding of the workspace architecture where applicable.
-- When working in individual projects, use the `nx_project_details` mcp tool to analyze and understand the specific project structure and dependencies
-- For questions around nx configuration, best practices or if you're unsure, use the `nx_docs` tool to get relevant, up-to-date docs. Always use this instead of assuming things about nx configuration
-- If the user needs help with an Nx configuration or project graph error, use the `nx_workspace` tool to get any errors
+
+# General Guidelines for Working with Nx (True North Audio)
+
+
+- **Nx-First Workflow:** All build, lint, test, serve, and e2e tasks must be run through Nx (`nx run`, `nx run-many`, `nx affected`) or the provided pnpm scripts. Never use underlying tooling directly (e.g., do not run `eslint` or `jest` directly).
+- **Strict Linting:** Lint targets are configured to *never* lint build artifacts (dist, build, out, test-output, etc.). Only source files are linted. This is enforced at both the Nx target and ESLint config level for all projects.
+- **Project Analysis:** Use the `nx_workspace` tool to understand the workspace architecture. For individual projects, use the `nx_project_details` tool to analyze structure and dependencies.
+- **Configuration & Best Practices:** For Nx configuration, best practices, or uncertainty, always use the `nx_docs` tool for up-to-date documentation. Never assume or guess Nx config details.
+- **Feature Development:** For new features (such as multi-section song generation), always update documentation, tests, and ensure strict linting before merging. Use modular Nx libraries for extensibility.
+- **CI/CD:** If you encounter CI errors, follow the CI Error Guidelines below. Always validate fixes by re-running the relevant Nx task.
+
 
 # CI Error Guidelines
 
-If the user wants help with fixing an error in their CI pipeline, use the following flow:
-- Retrieve the list of current CI Pipeline Executions (CIPEs) using the `nx_cloud_cipe_details` tool
-- If there are any errors, use the `nx_cloud_fix_cipe_failure` tool to retrieve the logs for a specific task
-- Use the task logs to see what's wrong and help the user fix their problem. Use the appropriate tools if necessary
-- Make sure that the problem is fixed by running the task that you passed into the `nx_cloud_fix_cipe_failure` tool
+If you need to fix an error in the CI pipeline, follow this process:
+1. Retrieve the list of current CI Pipeline Executions (CIPEs) using the `nx_cloud_cipe_details` tool.
+2. If there are errors, use the `nx_cloud_fix_cipe_failure` tool to get logs for the failed task.
+3. Use the logs to diagnose and fix the problem. Use Nx tools and scripts to apply fixes.
+4. Always re-run the relevant Nx task to validate the fix. Only mark the issue resolved when the task passes and no build artifacts are linted.
 
 
 <!-- nx configuration end-->

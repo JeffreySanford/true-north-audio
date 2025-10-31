@@ -47,7 +47,7 @@ describe('MusicGenController', () => {
   it('should call service and return music', (done) => {
     const dto = { genre: 'ambient', duration: 5 };
     controller.generate(dto).subscribe((result) => {
-      expect(service.generateMusic).toHaveBeenCalledWith('ambient', 5, undefined);
+      expect(service.generateMusic).toHaveBeenCalledWith('ambient', 5, undefined, undefined, undefined, undefined, undefined, undefined);
       expect(result.waveform).toBe('abc123');
       expect(result.sample_rate).toBe(22050);
       done();

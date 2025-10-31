@@ -19,9 +19,12 @@ OLAMMA_MODEL = os.environ.get("OLAMMA_MODEL", "musicgen")  # Replace with actual
 OLAMMA_BIN = os.environ.get("OLAMMA_BIN", "ollama")  # Path to ollama binary
 
 class MusicGenRequest(BaseModel):
-    prompt: str
+    genre: str
+    duration: Optional[int] = 10
     seed: Optional[int] = None
-    tempo: Optional[int] = None
+    idea: Optional[str] = None
+    vocal_artist: Optional[str] = None
+    tempo: Optional[int] = 120
 
 class MusicGenResponse(BaseModel):
     audio_url: Optional[str] = None
@@ -50,24 +53,25 @@ def stop_olamma():
 @app.post("/musicgen", response_model=MusicGenResponse)
 def generate_music(request: MusicGenRequest):
     """
-    Proxy request to Olamma server for music generation.
+    Proxy request to FastAPI backend for music generation.
     """
     try:
-        # Example: POST to Olamma REST API (replace with actual endpoint/model)
         response = requests.post(
-            f"http://{OLAMMA_HOST}:{OLAMMA_PORT}/api/generate",
+            f"http://localhost:8000/api/musicgen/generate",
             json={
-                "model": OLAMMA_MODEL,
-                "prompt": request.prompt,
+                "genre": request.genre,
+                "duration": request.duration,
                 "seed": request.seed,
+                "idea": request.idea,
+                "vocal_artist": request.vocal_artist,
                 "tempo": request.tempo
             },
             timeout=60
         )
         response.raise_for_status()
         data = response.json()
-        # Assume Olamma returns audio_url or similar
-        return MusicGenResponse(audio_url=data.get("audio_url"))
+        # Return audio_url or error from backend
+        return MusicGenResponse(audio_url=data.get("audio_url"), error=data.get("error"))
     except Exception as e:
         return MusicGenResponse(error=str(e))
 

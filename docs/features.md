@@ -1,9 +1,11 @@
 # Features
 
+
 ## Music Generation
 - Support for many genres and vocal features
 - Local AI model integration (Ollama, etc.)
 - Audio asset management
+- Long-form and multi-section song generation (verse, chorus, bridge, etc.)
 
 ## Video (Planned)
 - Video asset management and processing

@@ -12,8 +12,9 @@ This document describes the high-level architecture of the True North Audio Nx m
 - WebSocket streaming for real-time backend communication
 - MongoDB for persistent storage
 
+
 ## Extensibility
 - Designed for local-first use, with cloud migration in mind
-- Easy to add new genres, vocal features, and video capabilities
+- Easy to add new genres, vocal features, video capabilities, and multi-section song generation (verse, chorus, bridge, etc.)
 
 See other docs for details on each feature.

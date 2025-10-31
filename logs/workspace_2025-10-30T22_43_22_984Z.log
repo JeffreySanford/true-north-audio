@@ -1,0 +1,7 @@
+2025-10-30T22:43:37.500Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=AI_Male_1, tempo=120, variation=original, audioUrl=/audio/generated/ambient_AI_Male_1_713194.mp3, error=null
+2025-10-30T22:44:34.026Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=AI_Male_1, tempo=120, variation=original, audioUrl=/audio/generated/ambient_AI_Male_1_320153.mp3, error=null
+2025-10-30T22:48:38.559Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=none, tempo=120, variation=original, audioUrl=/audio/generated/ambient_none_343942.mp3, error=null
+2025-10-30T22:52:29.582Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=none, tempo=120, variation=original, audioUrl=/audio/generated/ambient_none_876552.mp3, error=null
+2025-10-30T22:52:40.262Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=none, tempo=120, variation=original, audioUrl=/audio/generated/ambient_none_530248.mp3, error=null
+2025-10-30T22:55:23.737Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=none, tempo=120, variation=original, audioUrl=/audio/generated/ambient_none_887822.mp3, error=null
+2025-10-30T22:55:47.006Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=none, tempo=120, variation=original, audioUrl=/audio/generated/ambient_none_222434.mp3, error=null

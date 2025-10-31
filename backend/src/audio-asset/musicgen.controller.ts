@@ -1,5 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { MusicGenService } from './musicgen.service';
+import { MusicGenService, MusicGenResult } from './musicgen.service';
 import { Observable } from 'rxjs';
 
 
@@ -13,6 +13,11 @@ export class GenerateMusicDto {
   genre!: string;
   duration!: number;
   seed?: number;
+  idea?: string;
+  vocal_artist?: string;
+  tempo?: number;
+  variation?: string;
+  songSections?: Array<{ type: string; duration: number; transition?: string }>;
 }
 
 
@@ -38,7 +43,16 @@ export class MusicGenController {
    *   POST /musicgen/generate { genre: 'ambient', duration: 10, seed: 42 }
    */
   @Post('generate')
-  generate(@Body() dto: GenerateMusicDto): Observable<{ waveform: string; sample_rate: number }> {
-    return this.musicGenService.generateMusic(dto.genre, dto.duration, dto.seed);
+  generate(@Body() dto: GenerateMusicDto): Observable<MusicGenResult> {
+    return this.musicGenService.generateMusic(
+      dto.genre,
+      dto.duration,
+      dto.seed,
+      dto.idea,
+      dto.vocal_artist,
+      dto.tempo,
+      dto.variation,
+      dto.songSections
+    );
   }
 }

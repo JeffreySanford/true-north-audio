@@ -1,0 +1,22 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Users\jeffr\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.6.2
+2 info using node@v20.19.5
+3 silly config load:file:C:\Users\jeffr\AppData\Roaming\npm\node_modules\npm\npmrc
+4 silly config load:file:C:\repos\true-north-audio\.npmrc
+5 silly config load:file:C:\Users\jeffr\.npmrc
+6 silly config load:file:C:\Users\jeffr\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm exec nx@latest configure-ai-agents
+8 verbose argv "exec" "--yes" "--cache" "C:UsersjeffrAppDataLocalTempnx-console-tmpb7758c54f7" "--ignore-scripts" "--" "nx@latest" "configure-ai-agents"
+9 verbose logfile logs-max:10 dir:C:\repos\true-north-audio\UsersjeffrAppDataLocalTempnx-console-tmpb7758c54f7\_logs\2025-10-30T21_38_21_613Z-
+10 verbose logfile C:\repos\true-north-audio\UsersjeffrAppDataLocalTempnx-console-tmpb7758c54f7\_logs\2025-10-30T21_38_21_613Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 http fetch GET 200 https://registry.npmjs.org/nx 245ms (cache updated)
+14 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+16 verbose cwd C:\repos\true-north-audio
+17 verbose os Windows_NT 10.0.26200
+18 verbose node v20.19.5
+19 verbose npm  v11.6.2
+20 verbose exit 0
+21 info ok

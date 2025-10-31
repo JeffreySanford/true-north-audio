@@ -1,6 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { Observable, map } from 'rxjs';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Observable, map, tap } from 'rxjs';
+import { OlammaLog } from '../models/olamma-log.model';
+import { WorkspaceLogger } from '../app/workspace-logger';
+export interface MusicGenResult {
+  waveform: string;
+  sample_rate: number;
+  vocals?: string;
+  audio_url?: string;
+  error?: string;
+}
 
 /**
  * Service for integrating with the Python AI music generation API.
@@ -12,7 +23,13 @@ import { Observable, map } from 'rxjs';
  */
 @Injectable()
 export class MusicGenService {
-  constructor(private readonly http: HttpService) {}
+  private logger: WorkspaceLogger;
+  constructor(
+    private readonly http: HttpService,
+    @InjectModel('OlammaLog') private readonly olammaLogModel: Model<OlammaLog>
+  ) {
+    this.logger = new WorkspaceLogger();
+  }
 
   /**
    * Request music generation from the Python FastAPI service.
@@ -28,14 +45,42 @@ export class MusicGenService {
   generateMusic(
     genre: string,
     duration: number,
-    seed?: number
-  ): Observable<{ waveform: string; sample_rate: number }> {
+    seed?: number,
+    idea?: string,
+    vocal_artist?: string,
+    tempo?: number,
+    variation?: string,
+    songSections?: Array<{ type: string; duration: number; transition?: string }>
+  ): Observable<MusicGenResult> {
+    // Call Olamma in-memory FastAPI
     return this.http
-      .post('http://localhost:8000/api/musicgen/generate', {
-        genre,
-        duration,
-        seed,
-      })
-      .pipe(map((response: { data: { waveform: string; sample_rate: number } }) => response.data));
+      .post<{ waveform: string; sample_rate: number; vocals?: string; audio_url?: string; error?: string }>(
+        'http://localhost:11434/musicgen',
+        {
+          genre,
+          duration,
+          seed,
+          idea,
+          vocal_artist,
+          tempo,
+          variation,
+          songSections
+        }
+      )
+      .pipe(
+        map((response) => response.data),
+        tap(async (result) => {
+          // Log to MongoDB
+          await this.olammaLogModel.create({
+            prompt: `Genre: ${genre}, Duration: ${duration}, Seed: ${seed}, Idea: ${idea}, VocalArtist: ${vocal_artist}, Tempo: ${tempo}, Variation: ${variation}, SongSections: ${JSON.stringify(songSections)}`,
+            audioUrl: result.audio_url || '',
+            createdAt: new Date(),
+          });
+          // Log to workspace log file
+          this.logger.info(
+            `MusicGen: genre=${genre}, duration=${duration}, seed=${seed}, idea=${idea}, vocal_artist=${vocal_artist}, tempo=${tempo}, variation=${variation}, songSections=${JSON.stringify(songSections)}, audioUrl=${result.audio_url}, error=${result.error}`
+          );
+        })
+      );
   }
 }

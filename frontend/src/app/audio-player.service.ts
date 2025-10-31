@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AudioPlayerService {
-  private audioCtx: AudioContext | null = null;
+  public audioCtx: AudioContext | null = null;
 
   playWaveformBase64(base64: string, sampleRate: number) {
     const floatArray = this.decodeBase64ToFloat32Array(base64);
@@ -51,7 +51,7 @@ export class AudioPlayerService {
     }
   }
 
-  private decodeBase64ToFloat32Array(base64: string): Float32Array {
+  public decodeBase64ToFloat32Array(base64: string): Float32Array {
     const binary = atob(base64);
     const len = binary.length / 4;
     const floatArray = new Float32Array(len);

@@ -33,8 +33,8 @@ export class SeedService implements OnModuleInit {
   async seedAudioAssets() {
     // First, fetch all genres and build a name->ObjectId map
     const genres = await this.genreModel.find({});
-    const genreMap = new Map<string, any>();
-    genres.forEach((g) => genreMap.set(g.name, g._id));
+  const genreMap = new Map<string, string>();
+  genres.forEach((g) => genreMap.set(g.name, String(g._id)));
 
     const assets = [
       { title: 'Demo Track', genre: 'Ambient', filePath: '/assets/demo-track.mp3' },

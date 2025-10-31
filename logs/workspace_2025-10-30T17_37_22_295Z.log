@@ -1,0 +1,2 @@
+2025-10-30T17:37:56.265Z - INFO - MusicGen: genre=ambient, duration=14, seed=undefined, idea=undefined, vocal_artist=undefined, tempo=undefined, audioUrl=/audio/generated/ambient_AI_Male_1_543372.wav, error=null
+2025-10-30T17:38:25.494Z - INFO - MusicGen: genre=electronic, duration=10, seed=undefined, idea=undefined, vocal_artist=AI_Male_1, tempo=120, audioUrl=/audio/generated/electronic_AI_Male_1_93165.wav, error=null

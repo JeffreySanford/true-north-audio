@@ -1,5 +1,17 @@
 packages:
-  - 'packages/*'
-  - 'backend'
-  - 'backend-e2e'
+  - packages/*
+  - backend
+  - backend-e2e
+
 autoInstallPeers: true
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - '@parcel/watcher'
+  - '@swc/core'
+  - esbuild
+  - lmdb
+  - mongodb-memory-server
+  - msgpackr-extract
+  - nx
+  - unrs-resolver

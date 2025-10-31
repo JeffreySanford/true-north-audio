@@ -1,5 +1,7 @@
 mido
+pydub
 psutil
 fastapi
 uvicorn
 numpy
+autopep8

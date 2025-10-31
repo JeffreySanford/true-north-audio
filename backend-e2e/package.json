@@ -20,6 +20,13 @@
           "@true-north-audio/backend:build",
           "@true-north-audio/backend:serve"
         ]
+      },
+      "lint": {
+        "cache": true,
+        "options": {
+          "cwd": "backend-e2e",
+          "command": "eslint . --ignore-pattern dist --ignore-pattern build --ignore-pattern out --ignore-pattern test-output"
+        }
       }
     }
   }

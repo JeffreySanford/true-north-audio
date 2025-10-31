@@ -1,3 +1,40 @@
+.musicgen-form .mat-form-field.genre-dropdown .mat-form-field-infix {
+  padding-left: 1em !important;
+}
+/* Consistent padding for dropdowns and input boxes */
+.musicgen-form .mat-form-field-infix {
+  padding: 0.5em !important;
+}
+/* Seed and Duration row styling */
+.seed-duration-row {
+  display: flex;
+  gap: 1em;
+  margin-bottom: 1em;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.duration-col {
+  width: 40%;
+  min-width: 180px;
+}
+.duration-label {
+  font-weight: 500;
+  margin-bottom: 0.5em;
+  display: block;
+}
+.duration-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  color: #888;
+}
+.seed-col {
+  width: 50%;
+  min-width: 180px;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+}
 
 
 

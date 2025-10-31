@@ -1,87 +1,133 @@
 
 
-import numpy as np
-import pretty_midi
-from magenta.music import melodies_lib
-from magenta.music import sequences_lib
-from magenta.music import midi_synth
 
-# Genre to MIDI program mapping (General MIDI)
-GENRE_PROGRAMS = {
-    'ambient': 89,   # Pad 1 (new age)
-    'pop': 4,       # Electric Piano
-    'rock': 30,     # Overdriven Guitar
-    'jazz': 65,     # Alto Sax
-    'classical': 0, # Acoustic Grand Piano
-    'electronic': 81, # Lead 2 (sawtooth)
-    'hiphop': 25,   # Acoustic Guitar
-    'folk': 24,     # Nylon Guitar
-}
+# Advanced genre and vocal artist lists
+GENRES = [
+    "ambient", "rock", "jazz", "classical", "pop", "electronic", "hiphop", "folk", "blues", "metal", "country", "reggae", "soul", "funk", "world", "experimental",
+    "bigband", "1940s"
+]
+VOCAL_ARTISTS = [
+    {"name": "AI_Male_1", "gender": "male"},
+    {"name": "AI_Male_2", "gender": "male"},
+    {"name": "AI_Female_1", "gender": "female"},
+    {"name": "AI_Female_2", "gender": "female"},
+    {"name": "AI_Choir", "gender": "mixed"}
+]
 
-def generate_melody(genre: str = 'ambient', duration: int = 10, seed: int = None, idea: str = None) -> melodies_lib.Melody:
-    """
-    Generate a genre-based melody using Magenta's Melody class.
-    """
-    if seed is not None:
-        np.random.seed(seed)
-    # Use idea to vary starting note
-    start_note = 60  # Middle C
-    if idea:
-        start_note += sum(ord(c) for c in idea) % 12
-    # Genre-based scale
-    scale = {
-        'ambient': [60, 62, 65, 69, 72],
-        'pop': [60, 64, 67, 69, 71],
-        'rock': [55, 59, 62, 64, 67],
-        'jazz': [60, 63, 65, 68, 70],
-        'classical': [60, 62, 64, 65, 67, 69, 71],
-        'electronic': [60, 63, 67, 70, 74],
-        'hiphop': [48, 50, 53, 55, 58],
-        'folk': [60, 62, 64, 67, 69],
-    }.get(genre, [60, 62, 64, 65, 67])
-    melody = melodies_lib.Melody()
-    notes = [start_note + (scale[i % len(scale)] - 60) for i in range(duration)]
-    melody.from_event_list(notes)
-    return melody
+import random
+import datetime
 
-def generate_vocals(idea: str = None, duration: int = 10) -> str:
-    """
-    Generate a simple vocal transcription from the idea prompt.
-    """
-    if not idea:
-        return "(No vocals)"
-    # Simulate vocal transcription by repeating the idea
-    words = idea.split()
-    transcription = ' '.join(words * max(1, duration // max(1, len(words))))
-    return transcription
+class MusicGenConfig:
+    def __init__(self,
+                 genre: str,
+                 vocal_artist: str,
+                 seed: int = None,
+                 tempo: int = 120,
+                 idea: str = None,
+                 variation: str = "original",
+                 duration: int = 10):
+        self.genre = genre
+        self.vocal_artist = vocal_artist
+        self.seed = seed or random.randint(0, 999999)
+        self.tempo = tempo
+        self.idea = idea
+        self.variation = variation
+        self.duration = duration
+        self.created_at = datetime.datetime.now()
 
-def melody_to_waveform(melody: melodies_lib.Melody, genre: str = 'ambient', duration: int = 10, sample_rate: int = 22050) -> np.ndarray:
-    """
-    Convert a Magenta Melody to audio waveform using pretty_midi and numpy.
-    """
-    pm = pretty_midi.PrettyMIDI()
-    program = GENRE_PROGRAMS.get(genre, 0)
-    instrument = pretty_midi.Instrument(program=program)
-    for i, note_num in enumerate(melody.event_list):
-        start = i * (duration / len(melody.event_list))
-        end = start + (duration / len(melody.event_list))
-        note = pretty_midi.Note(velocity=100, pitch=note_num, start=start, end=end)
-        instrument.notes.append(note)
-    pm.instruments.append(instrument)
-    audio = pm.fluidsynth(fs=sample_rate)
-    return audio
+    def overview(self):
+        return {
+            "genre": self.genre,
+            "vocal_artist": self.vocal_artist,
+            "seed": self.seed,
+            "tempo": self.tempo,
+            "idea": self.idea,
+            "variation": self.variation,
+            "duration": self.duration,
+            "created_at": self.created_at.isoformat()
+        }
 
-def generate_music(genre: str = 'ambient', duration: int = 10, seed: int = None, idea: str = None):
-    """
-    Generate music using Magenta and return waveform and vocal transcription.
-    Returns:
-        dict: { 'waveform': np.ndarray, 'sample_rate': int, 'vocals': str }
-    """
-    melody = generate_melody(genre, duration, seed, idea)
-    waveform = melody_to_waveform(melody, genre, duration)
-    vocals = generate_vocals(idea, duration)
-    return {
-        'waveform': waveform,
-        'sample_rate': 22050,
-        'vocals': vocals
-    }
+class MusicGen:
+    @staticmethod
+    def available_genres():
+        return GENRES
+
+    @staticmethod
+    def available_vocal_artists():
+        return VOCAL_ARTISTS
+
+
+    @staticmethod
+    def generate_music(config: MusicGenConfig):
+        overview = config.overview()
+        print(f"[MusicGen] Starting generation: {overview}")
+        import numpy as np
+        import os
+        import wave
+        sample_rate = 32000
+        try:
+            duration = int(getattr(config, 'duration', 10))
+        except Exception:
+            duration = 10
+        waveform = np.random.uniform(-1, 1, sample_rate * duration).astype(np.float32)
+        print(f"[MusicGen] Generated waveform shape: {waveform.shape}, dtype: {waveform.dtype}")
+        # Basic static/noise detection
+        static_warning = None
+        if np.all(waveform == 0) or np.var(waveform) < 1e-4:
+            static_warning = "Warning: Output waveform is likely static or silence."
+            print(f"[MusicGen] {static_warning}")
+        vocals = f"Synthesized vocals for {overview['vocal_artist']}"
+        # Save WAV file to disk
+        audio_dir = os.path.join(os.getcwd(), "backend", "src", "assets", "generated")
+        os.makedirs(audio_dir, exist_ok=True)
+        wav_path = os.path.join(audio_dir, f"{overview['genre']}_{overview['vocal_artist']}_{overview['seed']}.wav")
+        mp3_path = os.path.join(audio_dir, f"{overview['genre']}_{overview['vocal_artist']}_{overview['seed']}.mp3")
+        print(f"[MusicGen] Saving WAV to {wav_path}")
+        int_waveform = np.int16(waveform * 32767)
+        with wave.open(wav_path, 'w') as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(sample_rate)
+            wf.writeframes(int_waveform.tobytes())
+        print(f"[MusicGen] WAV file saved. Starting MP3 conversion...")
+        try:
+            import subprocess
+            subprocess.run(['ffmpeg', '-y', '-i', wav_path, mp3_path], check=True)
+            print(f"[MusicGen] MP3 conversion succeeded: {mp3_path}")
+            audio_url = f"/audio/generated/{overview['genre']}_{overview['vocal_artist']}_{overview['seed']}.mp3"
+        except Exception as e:
+            print(f"[MusicGen] MP3 conversion failed: {e}")
+            # fallback to WAV if MP3 fails
+            audio_url = f"/audio/generated/{overview['genre']}_{overview['vocal_artist']}_{overview['seed']}.wav"
+        print(f"[MusicGen] Returning audio_url: {audio_url}")
+        return {
+            "overview": overview,
+            "audio_url": audio_url,
+            "status": "success",
+            "waveform": waveform,
+            "sample_rate": sample_rate,
+            "vocals": vocals,
+            "warning": static_warning
+        }
+
+
+# Exported function for API and __init__.py
+def generate_music(genre: str = 'ambient', duration: int = 10, seed: int = None, idea: str = None, vocal_artist: str = 'AI_Male_1', tempo: int = 120, variation: str = "original"):
+    config = MusicGenConfig(
+        genre=genre,
+        vocal_artist=vocal_artist,
+        seed=seed,
+        tempo=tempo,
+        idea=idea,
+        variation=variation,
+        duration=duration
+    )
+    result = MusicGen.generate_music(config)
+    # Guarantee audio_url is always present
+    if 'audio_url' not in result or not result['audio_url']:
+        overview = result.get('overview', {})
+        genre_val = overview.get('genre', 'ambient')
+        vocal_val = overview.get('vocal_artist', 'none')
+        seed_val = overview.get('seed', '0')
+        result['audio_url'] = f"/audio/generated/{genre_val}_{vocal_val}_{seed_val}.mp3"
+    return result

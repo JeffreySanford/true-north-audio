@@ -92,6 +92,11 @@ env/
 ENV/
 musicgen-venv/
 
+# Environment variables (contains API keys)
+.env
+.env.local
+.env.*.local
+
 # Nx cache
 UsersjeffrAppDataLocalTempnx-console-tmpb7758c54f7/
 

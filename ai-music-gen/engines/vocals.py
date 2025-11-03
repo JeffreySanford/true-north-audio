@@ -2,7 +2,9 @@
 Vocal synthesis engine using TTS (text-to-speech) for spoken/sung lyrics.
 Integrates with the music generation pipeline.
 
-Uses Bark for realistic vocal synthesis.
+Supports multiple TTS engines:
+- Bark: Free, robotic but works offline
+- ElevenLabs: Best quality, requires API key ($5-11/month)
 """
 
 import numpy as np
@@ -11,25 +13,52 @@ import re
 import os
 import warnings
 
-# Fix PyTorch 2.6 weights_only issue with Bark models
-import torch
-if hasattr(torch.serialization, 'add_safe_globals'):
-    # Register numpy types as safe for Bark model loading
-    try:
-        import numpy.core.multiarray
-        torch.serialization.add_safe_globals([numpy.core.multiarray.scalar])
-        print("[Vocals] Registered numpy types for PyTorch safe loading")
-    except Exception as e:
-        print(f"[Vocals] Warning: Could not register safe globals: {e}")
-
-# Try to import Bark
+# Try to import ElevenLabs engine
 try:
-    from bark import SAMPLE_RATE as BARK_SAMPLE_RATE, generate_audio, preload_models
-    BARK_AVAILABLE = True
-    print("[Vocals] Bark TTS loaded successfully")
+    from engines.elevenlabs import generate_vocals_elevenlabs, ELEVENLABS_AVAILABLE
+    HAS_ELEVENLABS = True
 except ImportError:
-    BARK_AVAILABLE = False
-    print("[Vocals] Warning: Bark not available. Install with: pip install git+https://github.com/suno-ai/bark.git")
+    HAS_ELEVENLABS = False
+    ELEVENLABS_AVAILABLE = False
+
+# Lazy imports for Bark - only load when actually generating vocals
+BARK_AVAILABLE = None  # None = not checked yet, True = available, False = not available
+_bark_modules = {}  # Cache for bark imports
+
+def _ensure_bark_loaded():
+    """Lazy-load Bark only when needed to avoid slow startup times."""
+    global BARK_AVAILABLE, _bark_modules
+    
+    if BARK_AVAILABLE is not None:
+        return BARK_AVAILABLE
+    
+    try:
+        # Fix PyTorch 2.6 weights_only issue with Bark models
+        import torch
+        if hasattr(torch.serialization, 'add_safe_globals'):
+            # Register numpy types as safe for Bark model loading
+            try:
+                import numpy.core.multiarray
+                torch.serialization.add_safe_globals([numpy.core.multiarray.scalar])
+                print("[Vocals] Registered numpy types for PyTorch safe loading")
+            except Exception as e:
+                print(f"[Vocals] Warning: Could not register safe globals: {e}")
+        
+        # Import Bark modules
+        from bark import SAMPLE_RATE, generate_audio, preload_models
+        _bark_modules['SAMPLE_RATE'] = SAMPLE_RATE
+        _bark_modules['generate_audio'] = generate_audio
+        _bark_modules['preload_models'] = preload_models
+        _bark_modules['torch'] = torch
+        
+        BARK_AVAILABLE = True
+        print("[Vocals] Bark TTS loaded successfully")
+        return True
+    except ImportError as e:
+        BARK_AVAILABLE = False
+        print(f"[Vocals] Warning: Bark not available: {e}")
+        print("[Vocals] Install with: pip install git+https://github.com/suno-ai/bark.git")
+        return False
 
 
 def parse_lyrics_with_timing(lyrics: str) -> List[Dict[str, any]]:
@@ -91,26 +120,96 @@ def generate_vocals_placeholder(
     lyrics: str,
     duration: int,
     sample_rate: int = 32000,
-    vocal_style: str = "spoken"
+    vocal_style: str = "spoken",
+    engine: str = "auto"
 ) -> Dict[str, any]:
     """
-    Generate vocal audio from lyrics using Bark TTS.
+    Generate vocal audio from lyrics using TTS engines.
     
-    Uses Bark (https://github.com/suno-ai/bark) for realistic TTS.
-    Falls back to placeholder if Bark not available.
+    Supports multiple engines:
+    - "elevenlabs": Best quality, natural speech (requires API key)
+    - "bark": Free, offline, robotic quality
+    - "auto": Try ElevenLabs first, fallback to Bark
     
     Args:
         lyrics: Full lyrics text with optional timing
         duration: Target duration in seconds
-        sample_rate: Audio sample rate (will resample from Bark's 24kHz)
-        vocal_style: "spoken", "sung", "rap"
+        sample_rate: Audio sample rate
+        vocal_style: "spoken", "sung", "rap", "blues_narrator"
+        engine: "elevenlabs", "bark", or "auto"
     
     Returns:
-        Dict with 'waveform', 'sample_rate', 'segments'
+        Dict with 'waveform', 'sample_rate', 'segments', 'engine_used'
     """
     segments = parse_lyrics_with_timing(lyrics)
     
-    if not BARK_AVAILABLE:
+    # Determine which engine to use
+    use_elevenlabs = False
+    use_bark = False
+    
+    if engine == "elevenlabs":
+        if HAS_ELEVENLABS and ELEVENLABS_AVAILABLE:
+            use_elevenlabs = True
+            print("[Vocals] Using ElevenLabs TTS engine")
+        else:
+            print("[Vocals] ElevenLabs requested but not available, falling back to Bark")
+            use_bark = True
+    elif engine == "bark":
+        use_bark = True
+    else:  # auto
+        if HAS_ELEVENLABS and ELEVENLABS_AVAILABLE:
+            use_elevenlabs = True
+            print("[Vocals] Auto-selected ElevenLabs TTS (best quality)")
+        else:
+            use_bark = True
+            print("[Vocals] Auto-selected Bark TTS (ElevenLabs not configured)")
+    
+    # Use ElevenLabs if selected
+    if use_elevenlabs:
+        try:
+            result = generate_vocals_elevenlabs(
+                lyrics=lyrics,
+                duration=duration,
+                sample_rate=sample_rate,
+                vocal_style=vocal_style
+            )
+            result['segments'] = segments
+            result['engine_used'] = 'elevenlabs'
+            return result
+        except Exception as e:
+            print(f"[Vocals] ElevenLabs failed: {e}, falling back to Bark")
+            use_bark = True
+    
+    # Use Bark (fallback or explicitly requested)
+    if use_bark:
+        return _generate_vocals_bark(lyrics, duration, sample_rate, vocal_style, segments)
+    
+    # Ultimate fallback: silence
+    print("[Vocals] No vocal engine available, using silence")
+    waveform = np.zeros(duration * sample_rate, dtype=np.float32)
+    return {
+        'waveform': waveform,
+        'sample_rate': sample_rate,
+        'segments': segments,
+        'vocal_style': vocal_style,
+        'engine_used': 'none',
+        'note': 'No vocal engine available'
+    }
+
+
+def _generate_vocals_bark(
+    lyrics: str,
+    duration: int,
+    sample_rate: int,
+    vocal_style: str,
+    segments: List[Dict]
+) -> Dict[str, any]:
+    """
+    Generate vocals using Bark TTS engine.
+    Internal function called by generate_vocals_placeholder.
+    """
+    # Try to load Bark lazily (only on first vocal generation)
+    if not _ensure_bark_loaded():
         # Fallback to silence placeholder
         print("[Vocals] Using placeholder (Bark not available)")
         waveform = np.zeros(duration * sample_rate, dtype=np.float32)
@@ -124,6 +223,10 @@ def generate_vocals_placeholder(
     
     # Generate vocals with Bark
     print(f"[Vocals] Generating with Bark (style: {vocal_style})")
+    
+    # Get Bark sample rate from loaded modules
+    BARK_SAMPLE_RATE = _bark_modules['SAMPLE_RATE']
+    
     try:
         # Preload models on first use
         if not hasattr(generate_vocals_placeholder, '_models_loaded'):
@@ -131,7 +234,7 @@ def generate_vocals_placeholder(
             
             # Fix PyTorch 2.6 weights_only loading issue
             # Bark's models use numpy types that need to be explicitly allowed
-            import torch
+            torch = _bark_modules['torch']
             original_load = torch.load
             
             def patched_load(*args, **kwargs):
@@ -142,13 +245,13 @@ def generate_vocals_placeholder(
             # Temporarily patch torch.load
             torch.load = patched_load
             try:
-                preload_models()
+                _bark_modules['preload_models']()
                 print("[Vocals] Bark models loaded!")
             finally:
                 # Restore original torch.load
                 torch.load = original_load
             
-            generate_vocals_placeholder._models_loaded = True
+            generate_vocals_placeholder._models_loaded = True  # Actually should be _generate_vocals_bark._models_loaded
         
         # Create full waveform at Bark's native sample rate
         bark_waveform = np.zeros(int(duration * BARK_SAMPLE_RATE), dtype=np.float32)
@@ -176,12 +279,12 @@ def generate_vocals_placeholder(
             # Generate audio for this segment
             try:
                 # Patch torch.load for Bark's weights_only issue
-                import torch
+                torch = _bark_modules['torch']
                 original_load = torch.load
                 torch.load = lambda *args, **kwargs: original_load(*args, **{**kwargs, 'weights_only': False})
                 
                 try:
-                    audio_array = generate_audio(text, history_prompt=voice)
+                    audio_array = _bark_modules['generate_audio'](text, history_prompt=voice)
                 finally:
                     torch.load = original_load
                 
@@ -217,6 +320,7 @@ def generate_vocals_placeholder(
             'sample_rate': sample_rate,
             'segments': segments,
             'vocal_style': vocal_style,
+            'engine_used': 'bark',
             'note': f'Generated with Bark TTS (voice: {voice})'
         }
     
@@ -229,6 +333,7 @@ def generate_vocals_placeholder(
             'sample_rate': sample_rate,
             'segments': segments,
             'vocal_style': vocal_style,
+            'engine_used': 'bark',
             'note': f'Error: {str(e)}'
         }
 

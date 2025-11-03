@@ -52,7 +52,9 @@ export class MusicGenService {
     vocal_artist?: string,
     tempo?: number,
     variation?: string,
-    songSections?: Array<{ type: string; duration: number; transition?: string }>
+    songSections?: Array<{ type: string; duration: number; transition?: string }>,
+    lyrics?: string,
+    vocal_style?: string
   ): Observable<MusicGenResult> {
     // Call Olamma in-memory FastAPI
     return this.http
@@ -68,7 +70,9 @@ export class MusicGenService {
           vocal_artist,
           tempo,
           variation,
-          songSections
+          songSections,
+          lyrics,
+          vocal_style
         }
       )
       .pipe(
@@ -76,13 +80,13 @@ export class MusicGenService {
         tap(async (result) => {
           // Log to MongoDB
           await this.olammaLogModel.create({
-            prompt: `Genre: ${genre}, Duration: ${duration}, Engine: ${engine}, Model: ${model}, Seed: ${seed}, Idea: ${idea}, VocalArtist: ${vocal_artist}, Tempo: ${tempo}, Variation: ${variation}, SongSections: ${JSON.stringify(songSections)}`,
+            prompt: `Genre: ${genre}, Duration: ${duration}, Engine: ${engine}, Model: ${model}, Seed: ${seed}, Idea: ${idea}, VocalArtist: ${vocal_artist}, Tempo: ${tempo}, Variation: ${variation}, SongSections: ${JSON.stringify(songSections)}, Lyrics: ${lyrics ? 'yes' : 'no'}, VocalStyle: ${vocal_style}`,
             audioUrl: result.audio_url || '',
             createdAt: new Date(),
           });
           // Log to workspace log file
           this.logger.info(
-            `MusicGen: genre=${genre}, duration=${duration}, engine=${engine}, model=${model}, seed=${seed}, idea=${idea}, vocal_artist=${vocal_artist}, tempo=${tempo}, variation=${variation}, songSections=${JSON.stringify(songSections)}, audioUrl=${result.audio_url}, error=${result.error}`
+            `MusicGen: genre=${genre}, duration=${duration}, engine=${engine}, model=${model}, seed=${seed}, idea=${idea}, vocal_artist=${vocal_artist}, tempo=${tempo}, variation=${variation}, songSections=${JSON.stringify(songSections)}, lyrics=${lyrics ? 'yes' : 'no'}, vocal_style=${vocal_style}, audioUrl=${result.audio_url}, error=${result.error}`
           );
         }),
         catchError((error) => {
@@ -90,7 +94,7 @@ export class MusicGenService {
             ? 'Ollama service is not running. Please start Ollama with: ollama serve'
             : `Music generation failed: ${error.message}`;
           
-          this.logger.error(`MusicGen Error: ${errorMessage}`, error.stack);
+          this.logger.error(`MusicGen Error: ${errorMessage}`);
           
           // Return a user-friendly error response instead of throwing
           return of({

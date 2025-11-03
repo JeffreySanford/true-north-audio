@@ -56,7 +56,7 @@ print_waiting() {
 # Cleanup function
 cleanup() {
     echo ""
-    print_stage "��� SHUTTING DOWN SERVICES"
+    print_stage "��� SHUTTING DOWN SERVICES"
     
     if [ -n "$FRONTEND_PID" ]; then
         echo "  Stopping Frontend (PID: $FRONTEND_PID)..."
@@ -90,13 +90,13 @@ clear
 echo ""
 echo "╔════════════════════════════════════════════════════════════════╗"
 echo "║                                                                ║"
-echo "║         ��� TRUE NORTH AUDIO - STARTING ALL SERVICES           ║"
+echo "║         ��� TRUE NORTH AUDIO - STARTING ALL SERVICES           ║"
 echo "║                                                                ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 
 if [ $VERBOSE -eq 1 ]; then
-    echo "  ��� VERBOSE MODE ENABLED"
+    echo "  ��� VERBOSE MODE ENABLED"
     echo ""
 fi
 
@@ -105,7 +105,7 @@ START_TIME=$(date +%s)
 # ============================================================================
 # STAGE 1: CLEANUP
 # ============================================================================
-print_stage "��� STAGE 1: CLEANUP EXISTING PROCESSES"
+print_stage "��� STAGE 1: CLEANUP EXISTING PROCESSES"
 
 verbose_log "Killing node processes..."
 taskkill //F //IM node.exe 2>&1 | grep -v "ERROR" >/dev/null && print_success "Node processes stopped" || print_info "No node processes running"
@@ -129,17 +129,12 @@ print_success "Cleanup complete"
 # ============================================================================
 # STAGE 2: BUILD BACKEND
 # ============================================================================
-print_stage "��� STAGE 2: BUILD BACKEND"
+print_stage "��� STAGE 2: BUILD BACKEND"
 
 verbose_log "Running: npx nx run @true-north-audio/backend:build --skip-nx-cache"
 
-if [ $VERBOSE -eq 1 ]; then
-    npx nx run @true-north-audio/backend:build --skip-nx-cache 2>&1
-    BUILD_EXIT=$?
-else
-    npx nx run @true-north-audio/backend:build --skip-nx-cache 2>&1 | grep -E "(Successfully|Error|NX|webpack)" --line-buffered || true
-    BUILD_EXIT=${PIPESTATUS[0]}
-fi
+npx nx run @true-north-audio/backend:build --skip-nx-cache
+BUILD_EXIT=$?
 
 if [ $BUILD_EXIT -eq 0 ]; then
     print_success "Backend build complete"
@@ -151,7 +146,7 @@ fi
 # ============================================================================
 # STAGE 3: START BACKEND
 # ============================================================================
-print_stage "��� STAGE 3: START BACKEND (Port 3000)"
+print_stage "��� STAGE 3: START BACKEND (Port 3000)"
 
 print_info "Backend will use in-memory MongoDB (mongodb-memory-server)"
 print_info "First run may download MongoDB binaries (~200MB, 1-2 min)"
@@ -217,7 +212,7 @@ fi
 # ============================================================================
 # STAGE 4: START FASTAPI
 # ============================================================================
-print_stage "��� STAGE 4: START FASTAPI (Port 8000)"
+print_stage "��� STAGE 4: START FASTAPI (Port 8000)"
 
 verbose_log "Log file: $FASTAPI_LOG"
 verbose_log "Command: python -m musicgen.api"
@@ -268,7 +263,7 @@ fi
 # ============================================================================
 # STAGE 5: START OLLAMA PROXY
 # ============================================================================
-print_stage "��� STAGE 5: START OLLAMA PROXY (Port 11434)"
+print_stage "��� STAGE 5: START OLLAMA PROXY (Port 11434)"
 
 verbose_log "Log file: $OLLAMA_LOG"
 verbose_log "Command: python -c 'from libs.musicgen.olamma_api import app; import uvicorn; uvicorn.run(app, host=\"0.0.0.0\", port=11434)'"
@@ -319,7 +314,7 @@ fi
 # ============================================================================
 # STAGE 6: START FRONTEND
 # ============================================================================
-print_stage "��� STAGE 6: START FRONTEND (Port 4200)"
+print_stage "��� STAGE 6: START FRONTEND (Port 4200)"
 
 verbose_log "Log file: $FRONTEND_LOG"
 verbose_log "Command: ./node_modules/.bin/nx serve frontend --host=0.0.0.0 --port=4200"
@@ -381,29 +376,29 @@ END_TIME=$(date +%s)
 STARTUP_TIME=$((END_TIME - START_TIME))
 
 echo ""
-print_stage "��� ALL SERVICES RUNNING"
+print_stage "��� ALL SERVICES RUNNING"
 echo ""
 printf "  ⏱️  Total startup time: %dm %ds\n" $((STARTUP_TIME/60)) $((STARTUP_TIME%60))
 echo ""
-echo "  ��� Process IDs:"
+echo "  ��� Process IDs:"
 echo "     Backend:      $BACKEND_PID"
 echo "     FastAPI:      $FASTAPI_PID"
 echo "     Ollama Proxy: $OLLAMA_PID"
 echo "     Frontend:     $FRONTEND_PID"
 echo ""
-echo "  ��� Live Endpoints:"
+echo "  ��� Live Endpoints:"
 echo "     Frontend:     http://localhost:4200/"
 echo "     Backend API:  http://localhost:3000/api"
 echo "     FastAPI:      http://localhost:8000/docs"
 echo "     Ollama Proxy: http://localhost:11434/olamma/status"
 echo ""
-echo "  ��� Log Files:"
+echo "  ��� Log Files:"
 echo "     Backend:      tail -f $BACKEND_LOG"
 echo "     FastAPI:      tail -f $FASTAPI_LOG"
 echo "     Ollama:       tail -f $OLLAMA_LOG"
 echo "     Frontend:     tail -f $FRONTEND_LOG"
 echo ""
-echo "  ��� Quick Health Checks:"
+echo "  ��� Quick Health Checks:"
 echo "     curl --fail http://localhost:3000/api"
 echo "     curl --fail http://localhost:4200/"
 echo "     curl --fail http://localhost:11434/olamma/status"

@@ -31,6 +31,10 @@ class MusicGenRequest(BaseModel):
     idea: Optional[str] = None
     vocal_artist: Optional[str] = None
     tempo: Optional[int] = 120
+    variation: Optional[str] = 'original'
+    songSections: Optional[list] = None
+    lyrics: Optional[str] = None
+    vocal_style: Optional[str] = 'spoken'
 
 
 class MusicGenResponse(BaseModel):
@@ -61,7 +65,11 @@ def generate_music(request: MusicGenRequest):
                 "seed": request.seed,
                 "idea": request.idea,
                 "vocal_artist": request.vocal_artist,
-                "tempo": request.tempo
+                "tempo": request.tempo,
+                "variation": request.variation,
+                "songSections": request.songSections,
+                "lyrics": request.lyrics,
+                "vocal_style": request.vocal_style
             },
             timeout=60
         )

@@ -21,6 +21,8 @@ export class GenerateMusicDto {
   tempo?: number;
   variation?: string;
   songSections?: Array<{ type: string; duration: number; transition?: string }>;
+  lyrics?: string;
+  vocal_style?: string;
 }
 
 
@@ -57,7 +59,9 @@ export class MusicGenController {
       dto.vocal_artist,
       dto.tempo,
       dto.variation,
-      dto.songSections
+      dto.songSections,
+      dto.lyrics,
+      dto.vocal_style
     );
   }
 }

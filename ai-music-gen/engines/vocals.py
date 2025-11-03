@@ -154,12 +154,16 @@ def generate_vocals_placeholder(
         bark_waveform = np.zeros(int(duration * BARK_SAMPLE_RATE), dtype=np.float32)
         
         # Select voice based on style
+        # Best Bark voice presets for music
         voice_presets = {
             'spoken': 'v2/en_speaker_6',  # Clear male voice
-            'sung': 'v2/en_speaker_9',    # Musical voice
-            'rap': 'v2/en_speaker_3'      # Rhythmic voice
+            'sung': 'v2/en_speaker_9',    # Musical male voice (best for blues)
+            'sung_female': 'v2/en_speaker_0',  # Female singing voice
+            'rap': 'v2/en_speaker_3',     # Rhythmic voice
+            'deep': 'v2/en_speaker_1',    # Deep bass voice
+            'smooth': 'v2/en_speaker_5'   # Smooth crooner voice
         }
-        voice = voice_presets.get(vocal_style, 'v2/en_speaker_6')
+        voice = voice_presets.get(vocal_style, 'v2/en_speaker_9')  # Default to singing voice
         
         # Generate each segment
         for i, segment in enumerate(segments):

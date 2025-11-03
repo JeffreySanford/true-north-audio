@@ -63,23 +63,25 @@ if __name__ == "__main__":
     print("  Genre:       Blues")
     print("  Tempo:       90 BPM")
     print("  Duration:    2:00 (120 seconds)")
-    print("  Vocal Style: Spoken")
+    print("  Vocal Style: Sung (Musical blues voice)")
+    print("  Voice:       Bark v2/en_speaker_9 (best for blues)")
     print("  Segments:    7 (Verse, Chorus, Bridge, Outro)")
+    print("")
+    print("🎸 Instruments:")
+    print("   - Synthesized blues guitar, bass, piano")
+    print("   - Real instrument samples coming in next update!")
     print("")
     print("⚠️  Note: This will take 10-20 minutes on CPU")
     print("   Bark generates ~2-3 minutes per vocal segment")
     print("")
-    
-    input("Press Enter to start generation...")
-    
-    print("\n🎤 Generating with Bark vocals...\n")
+    print("🎤 Starting generation with Bark vocals...\n")
     
     result = generate_music(
         genre='blues',
         duration=120,
         tempo=90,
         lyrics=lyrics,
-        vocal_style='spoken',
+        vocal_style='sung',  # Use singing voice instead of spoken
         vocal_artist='AI_Male_1',
         seed=2025
     )

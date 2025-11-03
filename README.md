@@ -5,13 +5,29 @@
 ## Overview
 True North Audio is a local-first, AI-powered music and video asset creator, built as a robust Nx monorepo. It is optimized for modern hardware (i7/i9 CPUs, NVIDIA GPUs), but is cloud-ready for future deployment. The architecture and workflow are designed for maintainability, extensibility, and strict code quality.
 
+**🎯 Project Status:** 75% Complete (See [PROJECT_STATUS.md](PROJECT_STATUS.md) for detailed analysis)
 
+**🚀 Next Steps:**
+1. Activate VS Build Tools and install AudioCraft (1-2 hours)
+2. Implement Python FastAPI engine detection endpoints (2-3 hours)
+3. Enable GPU/CUDA support for PyTorch (1-2 hours)
 
 ### Key Features
 - **Frontend:** Angular (Material Design 3), non-standalone components, RxJS data streams, vibrant UI, clear status indicators
+  - ✅ Multi-engine AI selector UI (AudioCraft / Bark TTS / Auto)
+  - ✅ Engine availability indicators and status display
+  - ✅ Result metadata showing generation time and model info
 - **Backend:** NestJS, MongoDB (Mongoose ODM), WebSocket streaming, RBAC user management, static file serving for generated assets
-- **Audio/AI:** Local model integration (Ollama, etc.), scalable genre/vocal feature support, advanced creative controls, support for long-form and multi-section song generation (verse, chorus, bridge, etc.)
-- **Song Structure:** Multi-section song requests (planned), with support for arranging verses, choruses, and transitions.
+  - ✅ `/musicgen/engines` endpoint for engine availability checking
+  - ✅ Engine parameter support in generation requests
+  - ⚠️ Python FastAPI integration needs engine routing implementation
+- **Audio/AI:** Local model integration with dual-engine support
+  - ✅ **Bark TTS + MIDI** (Working) - AI vocals with 12-bar blues backing
+  - ⚠️ **AudioCraft/MusicGen** (Blocked) - Full AI music generation pending installation
+  - ✅ Python 3.13.3 with PyTorch 2.9.0, numpy, scipy, librosa, mido
+  - ⚠️ GPU/CUDA support pending (CPU-only currently)
+  - ✅ Hardware detection (i9 24-core, 63.7GB RAM)
+- **Song Structure:** Multi-section song requests (planned), with support for arranging verses, choruses, and transitions
 - **Video:** Planned for future releases (video asset management, remix, etc.)
 - **User Management:** Role-based access control (RBAC), extensible for future OAuth/cloud auth
 - **Nx Workspace:** Modular, strict boundaries, shared libraries for DTOs/types, robust lint/build/test workflow
@@ -43,14 +59,54 @@ True North Audio is a local-first, AI-powered music and video asset creator, bui
 
 
 ## Getting Started
-1. Install dependencies: `pnpm install`
-2. Install Angular Material (required for frontend UI):
-  - At workspace root: `pnpm add -w @angular/material @angular/cdk`
-  - If you see EPERM or permission errors, close all editors/servers, ensure write access, and retry. You may need to run as administrator.
-3. Run all lint/build/test/serve tasks via Nx or pnpm scripts (see below). Never use underlying tooling directly.
-4. Run backend: `nx serve backend` (must be running before frontend for proxy)
-5. Run frontend: `nx serve frontend --proxy-config=src/proxy.conf.json`
-6. To generate longer songs, set the duration slider up to 180 seconds in the UI. For multi-section songs, see planned features below.
+
+### Quick Start (5 minutes)
+1. **Install dependencies:** `pnpm install` (auto-installs Python requirements)
+2. **Install Angular Material:**
+   ```bash
+   pnpm add -w @angular/material @angular/cdk
+   ```
+3. **Start backend:** `nx serve backend` (must run first for proxy)
+4. **Start frontend:** `nx serve frontend --proxy-config=src/proxy.conf.json`
+5. **Visit:** http://localhost:4200
+
+### AI Engine Setup (Optional)
+
+**Current State:**
+- ✅ **Bark TTS + MIDI:** Ready to use immediately
+- ⚠️ **AudioCraft/MusicGen:** Requires installation (see below)
+
+**To Enable AudioCraft:**
+1. **Activate VS Build Tools:**
+   ```bash
+   # In Command Prompt (not bash)
+   "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+   ```
+2. **Install AudioCraft:**
+   ```bash
+   pip install git+https://github.com/facebookresearch/audiocraft
+   ```
+3. **Test installation:**
+   ```bash
+   python -c "import audiocraft; from audiocraft.models import MusicGen; print('✅ AudioCraft ready!')"
+   ```
+
+**To Enable GPU (CUDA):**
+1. **Check GPU:** `nvidia-smi`
+2. **Install CUDA Toolkit:** https://developer.nvidia.com/cuda-downloads
+3. **Reinstall PyTorch with CUDA:**
+   ```bash
+   pip uninstall torch torchvision torchaudio
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+   ```
+
+See [INSTALLATION_CHECKLIST.md](INSTALLATION_CHECKLIST.md) for detailed setup instructions.
+
+### Configuration Notes
+- **Long songs:** Set duration slider up to 180 seconds in the UI
+- **Multi-section songs:** See planned features (verse, chorus, bridge, etc.)
+- **Engine selection:** Use the radio buttons in the UI to choose AI engine
+- **GPU acceleration:** Automatically used when CUDA is detected
 
 
 ## Nx Scripts & Workflow

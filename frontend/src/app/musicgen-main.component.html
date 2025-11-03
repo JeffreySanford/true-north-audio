@@ -1,0 +1,33 @@
+<mat-toolbar color="primary" class="mat-elevation-z4">
+  <span>🎸 Liberty Blues Music Generator</span>
+</mat-toolbar>
+<mat-card class="main-card">
+  <mat-form-field appearance="fill" class="genre-select">
+    <mat-label>Genre</mat-label>
+  <mat-select [(ngModel)]="selectedGenre" (ngModelChange)="onGenreChange($event)">
+      <mat-option *ngFor="let genre of genres" [value]="genre">{{ genre.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <div class="swipe-controls">
+  <button mat-icon-button *ngIf="selectedGenre !== null && genres.length" (click)="onGenreChange(genres[(genres.indexOf(selectedGenre!)-1+genres.length)%genres.length])">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  <button mat-icon-button *ngIf="selectedGenre !== null && genres.length" (click)="onGenreChange(genres[(genres.indexOf(selectedGenre!)+1)%genres.length])">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+  <h4>Instruments</h4>
+  <div class="instrument-toggles">
+    <mat-slide-toggle *ngFor="let inst of instruments" color="accent"
+      [checked]="activeInstruments.includes(inst)"
+      (change)="toggleInstrument(inst)">
+      {{ inst }}
+    </mat-slide-toggle>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="sample-info">
+    <strong>Default Sample:</strong> Liberty Blues
+    <audio controls src="/assets/generated/LIBERTY_BLUES_FULL_BAND.wav" style="width:100%"></audio>
+  </div>
+</mat-card>

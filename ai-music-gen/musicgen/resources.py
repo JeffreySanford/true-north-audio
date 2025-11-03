@@ -1,1 +1,0 @@
-# musicgen resources module

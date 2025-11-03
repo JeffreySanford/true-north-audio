@@ -10,6 +10,54 @@
         <mat-card-subtitle>Expressive, vibrant, and fun!</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
+        <!-- AI Engine Selector -->
+        <div class="engine-selector" style="margin-bottom: 1.5em; padding: 1em; background: rgba(0,0,0,0.05); border-radius: 8px;">
+          <h3 style="margin-top: 0; display: flex; align-items: center; gap: 0.5em;">
+            <mat-icon color="primary">psychology</mat-icon>
+            AI Engine
+          </h3>
+          <mat-radio-group [(ngModel)]="selectedEngine" name="engine" style="display: flex; flex-direction: column; gap: 1em;">
+            <mat-radio-button value="auto" color="accent">
+              <div style="display: flex; flex-direction: column;">
+                <strong>{{ getEngineDisplayName('auto') }}</strong>
+                <small style="color: #888;">{{ getEngineDescription('auto') }}</small>
+                <small *ngIf="enginesLoaded && availableEngines.recommended === 'auto'" style="color: #4CAF50;">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">check_circle</mat-icon>
+                  Recommended
+                </small>
+              </div>
+            </mat-radio-button>
+            <mat-radio-button value="audiocraft" [disabled]="!availableEngines.audiocraft" color="accent">
+              <div style="display: flex; flex-direction: column;">
+                <strong>{{ getEngineDisplayName('audiocraft') }}</strong>
+                <small style="color: #888;">{{ getEngineDescription('audiocraft') }}</small>
+                <small *ngIf="!availableEngines.audiocraft" style="color: #f44336;">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">error</mat-icon>
+                  Not installed - Install Visual Studio Build Tools
+                </small>
+                <small *ngIf="availableEngines.audiocraft" style="color: #4CAF50;">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">check_circle</mat-icon>
+                  Available
+                </small>
+              </div>
+            </mat-radio-button>
+            <mat-radio-button value="bark" [disabled]="!availableEngines.bark" color="accent">
+              <div style="display: flex; flex-direction: column;">
+                <strong>{{ getEngineDisplayName('bark') }}</strong>
+                <small style="color: #888;">{{ getEngineDescription('bark') }}</small>
+                <small *ngIf="!availableEngines.bark" style="color: #f44336;">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">error</mat-icon>
+                  Not installed - Run: pip install suno-bark
+                </small>
+                <small *ngIf="availableEngines.bark" style="color: #4CAF50;">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">check_circle</mat-icon>
+                  Available
+                </small>
+              </div>
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
         <form class="musicgen-form" (ngSubmit)="generateMusic()">
           <div style="display: flex; gap: 1em; margin-top: 1em;">
             <mat-form-field appearance="outline" color="accent" style="flex: 1;" class="genre-dropdown">
@@ -145,6 +193,21 @@
         <div *ngIf="result" class="result-card animate-slide-in">
           <mat-icon color="primary">check_circle</mat-icon>
           <span class="result-title">Music generated!</span>
+          
+          <!-- Engine Used Indicator -->
+          <div *ngIf="result.engine" style="margin: 1em 0; padding: 0.75em; background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4CAF50; border-radius: 4px;">
+            <div style="display: flex; align-items: center; gap: 0.5em;">
+              <mat-icon color="primary" style="font-size: 20px;">{{ result.engine === 'audiocraft' ? 'music_video' : result.engine === 'bark' ? 'record_voice_over' : 'piano' }}</mat-icon>
+              <strong>Generated with: {{ result.engine === 'audiocraft' ? '🎸 AudioCraft (MusicGen)' : result.engine === 'bark' ? '🎤 Bark TTS + MIDI' : '🎹 MIDI Only' }}</strong>
+            </div>
+            <div *ngIf="result.generation_time" style="font-size: 0.9em; color: #666; margin-top: 0.25em;">
+              ⏱️ Generation time: {{ result.generation_time.toFixed(1) }}s
+            </div>
+            <div *ngIf="result.model_info" style="font-size: 0.85em; color: #888; margin-top: 0.25em;">
+              {{ result.model_info }}
+            </div>
+          </div>
+
           <div class="result-details">
             <span><mat-icon color="primary">speed</mat-icon> Sample rate: <strong>{{ result.sample_rate }}</strong></span>
             <span><mat-icon color="accent">graphic_eq</mat-icon> Waveform (base64): <span class="waveform-preview">{{ result.waveform | slice:0:32 }}...</span></span>

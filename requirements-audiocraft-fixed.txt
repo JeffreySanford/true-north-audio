@@ -1,0 +1,21 @@
+# AudioCraft Installation Fix for Windows Python 3.13
+# This file uses spacy 3.8+ which has pre-built wheels (no C++ compilation needed)
+
+# Core dependencies (already installed)
+torch>=2.0.0
+torchaudio
+transformers>=4.30.0
+numpy<2.0.0
+scipy>=1.10.0
+
+# AudioCraft dependencies with fixed versions
+einops
+flashy>=0.0.1
+hydra-core>=1.1
+hydra-colorlog
+julius
+num2words
+sentencepiece
+
+# Use newer spacy that has pre-built wheels for Python 3.13
+spacy>=3.8.0  # Changed from 3.7.6 to use pre-built wheels

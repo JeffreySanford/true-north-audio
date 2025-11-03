@@ -1,0 +1,209 @@
+{
+  "genres": {
+    "chicago_blues": {
+      "name": "Chicago Blues",
+      "description": "Traditional Chicago blues with shuffle groove and 12-bar progression",
+      "bpm": 88,
+      "timeSignature": "4/4",
+      "groove": "shuffle",
+      "instruments": [
+        "lead_guitar",
+        "rhythm_guitar",
+        "organ",
+        "piano",
+        "bass",
+        "harmonica",
+        "sax_tenor",
+        "drums"
+      ],
+      "mandatoryInstruments": ["bass", "drums"],
+      "scriptTemplate": "chicago_blues_template.py"
+    },
+    "james_brown_funk": {
+      "name": "James Brown Funk",
+      "description": "Funk-driven with emphasis on 'The One', chicken scratch guitar, tight horns",
+      "bpm": 108,
+      "timeSignature": "4/4",
+      "groove": "straight_16th",
+      "instruments": [
+        "rhythm_guitar",
+        "lead_guitar",
+        "bass",
+        "organ",
+        "trumpet_1",
+        "trumpet_2",
+        "sax_tenor",
+        "sax_bari",
+        "trombone",
+        "drums",
+        "percussion",
+        "piano"
+      ],
+      "mandatoryInstruments": ["rhythm_guitar", "bass", "drums"],
+      "scriptTemplate": "jb_funk_template.py"
+    },
+    "massive_orchestra": {
+      "name": "Massive Blues Orchestra",
+      "description": "Full 16-piece orchestra with extensive horn section and keys",
+      "bpm": 88,
+      "timeSignature": "4/4",
+      "groove": "shuffle",
+      "instruments": [
+        "lead_guitar",
+        "rhythm_guitar",
+        "organ",
+        "piano",
+        "bass",
+        "harmonica",
+        "sax_tenor",
+        "sax_bari",
+        "trumpet",
+        "drums",
+        "trombone",
+        "conga_bongo",
+        "electric_piano",
+        "synth_pad",
+        "brass_section",
+        "percussion"
+      ],
+      "mandatoryInstruments": ["bass", "drums"],
+      "scriptTemplate": "massive_orchestra_template.py"
+    },
+    "memphis_soul": {
+      "name": "Memphis Soul",
+      "description": "Stax Records style with tight rhythm section and horn punches",
+      "bpm": 96,
+      "timeSignature": "4/4",
+      "groove": "straight",
+      "instruments": [
+        "rhythm_guitar",
+        "lead_guitar",
+        "bass",
+        "organ",
+        "trumpet",
+        "sax_tenor",
+        "sax_bari",
+        "drums",
+        "piano",
+        "tambourine"
+      ],
+      "mandatoryInstruments": ["organ", "bass", "drums"],
+      "scriptTemplate": "memphis_soul_template.py"
+    },
+    "motown": {
+      "name": "Motown",
+      "description": "Detroit sound with bass-heavy groove, tambourine, and string arrangements",
+      "bpm": 110,
+      "timeSignature": "4/4",
+      "groove": "straight",
+      "instruments": [
+        "bass",
+        "drums",
+        "rhythm_guitar",
+        "piano",
+        "organ",
+        "tambourine",
+        "strings",
+        "sax_tenor",
+        "trumpet",
+        "trombone",
+        "vibraphone"
+      ],
+      "mandatoryInstruments": ["bass", "drums", "tambourine"],
+      "scriptTemplate": "motown_template.py"
+    },
+    "delta_blues": {
+      "name": "Delta Blues",
+      "description": "Raw, stripped-down blues with slide guitar and minimal instrumentation",
+      "bpm": 72,
+      "timeSignature": "4/4",
+      "groove": "slow_shuffle",
+      "instruments": [
+        "slide_guitar",
+        "acoustic_guitar",
+        "harmonica",
+        "bass",
+        "drums_minimal"
+      ],
+      "mandatoryInstruments": ["slide_guitar"],
+      "scriptTemplate": "delta_blues_template.py"
+    },
+    "jazz_blues": {
+      "name": "Jazz Blues",
+      "description": "Sophisticated jazz harmonies with walking bass and swing feel",
+      "bpm": 120,
+      "timeSignature": "4/4",
+      "groove": "swing",
+      "instruments": [
+        "jazz_guitar",
+        "piano",
+        "bass",
+        "drums_jazz",
+        "sax_tenor",
+        "sax_alto",
+        "trumpet",
+        "trombone",
+        "vibraphone"
+      ],
+      "mandatoryInstruments": ["bass", "drums_jazz"],
+      "scriptTemplate": "jazz_blues_template.py"
+    },
+    "texas_blues": {
+      "name": "Texas Blues",
+      "description": "Big guitar tone with swing rhythm and horn section",
+      "bpm": 92,
+      "timeSignature": "4/4",
+      "groove": "shuffle",
+      "instruments": [
+        "lead_guitar",
+        "rhythm_guitar",
+        "bass",
+        "drums",
+        "organ",
+        "sax_tenor",
+        "trumpet",
+        "piano"
+      ],
+      "mandatoryInstruments": ["lead_guitar", "bass", "drums"],
+      "scriptTemplate": "texas_blues_template.py"
+    },
+    "new_orleans_funk": {
+      "name": "New Orleans Funk",
+      "description": "Second line groove with syncopated rhythms and brass band elements",
+      "bpm": 100,
+      "timeSignature": "4/4",
+      "groove": "second_line",
+      "instruments": [
+        "bass",
+        "drums",
+        "guitar",
+        "organ",
+        "trombone",
+        "trumpet",
+        "sax_tenor",
+        "sax_bari",
+        "tuba",
+        "percussion"
+      ],
+      "mandatoryInstruments": ["bass", "drums", "trombone"],
+      "scriptTemplate": "nola_funk_template.py"
+    },
+    "british_blues_rock": {
+      "name": "British Blues Rock",
+      "description": "Heavy guitar-driven blues rock with power and sustain",
+      "bpm": 100,
+      "timeSignature": "4/4",
+      "groove": "rock",
+      "instruments": [
+        "lead_guitar",
+        "rhythm_guitar",
+        "bass",
+        "drums",
+        "organ",
+        "piano"
+      ],
+      "mandatoryInstruments": ["lead_guitar", "bass", "drums"],
+      "scriptTemplate": "british_blues_rock_template.py"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+Defaulting to user installation because normal site-packages is not writeable
+Collecting git+https://github.com/facebookresearch/audiocraft
+  Cloning https://github.com/facebookresearch/audiocraft to c:\users\sanford\appdata\local\temp\pip-req-build-ntojlpmw
+  Running command git clone --filter=blob:none --quiet https://github.com/facebookresearch/audiocraft 'C:\Users\Sanford\AppData\Local\Temp\pip-req-build-ntojlpmw'
+  Resolved https://github.com/facebookresearch/audiocraft to commit 896ec7c47f5e5d1e5aa1e4b260c4405328bf009d
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting av==11.0.0 (from audiocraft==1.4.0a2)
+  Using cached av-11.0.0.tar.gz (3.7 MB)
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  Preparing metadata (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  [20 lines of output]
+  Traceback (most recent call last):
+    File "C:\Python313\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py", line 389, in <module>
+      main()
+      ~~~~^^
+    File "C:\Python313\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py", line 373, in main
+      json_out["return_val"] = hook(**hook_input["kwargs"])
+                               ~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Python313\Lib\site-packages\pip\_vendor\pyproject_hooks\_in_process\_in_process.py", line 175, in prepare_metadata_for_build_wheel
+      return hook(metadata_directory, config_settings)
+    File "C:\Users\Sanford\AppData\Roaming\Python\Python313\site-packages\setuptools\build_meta.py", line 374, in prepare_metadata_for_build_wheel
+      self.run_setup()
+      ~~~~~~~~~~~~~~^^
+    File "C:\Users\Sanford\AppData\Roaming\Python\Python313\site-packages\setuptools\build_meta.py", line 512, in run_setup
+      super().run_setup(setup_script=setup_script)
+      ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\Sanford\AppData\Roaming\Python\Python313\site-packages\setuptools\build_meta.py", line 317, in run_setup
+      exec(code, locals())
+      ~~~~^^^^^^^^^^^^^^^^
+    File "<string>", line 10, in <module>
+  ModuleNotFoundError: No module named 'Cython'
+  [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+
+[notice] A new release of pip is available: 25.0.1 -> 25.3
+[notice] To update, run: python.exe -m pip install --upgrade pip
+error: metadata-generation-failed
+
+Encountered error while generating package metadata.
+
+See above for output.
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.

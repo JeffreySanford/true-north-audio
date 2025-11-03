@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { MusicGenService, MusicGenResult } from './musicgen.service';
+import { Component, inject, OnInit } from '@angular/core';
+import { MusicGenService, MusicGenResult, AIEngine } from './musicgen.service';
 import { AudioPlayerService } from './audio-player.service';
 
 @Component({
@@ -9,7 +9,17 @@ import { AudioPlayerService } from './audio-player.service';
   animations: [],
   standalone: false
 })
-export class MainPageComponent {
+export class MainPageComponent implements OnInit {
+  // AI Engine selection
+  selectedEngine: AIEngine = 'auto';
+  availableEngines = {
+    audiocraft: false,
+    bark: false,
+    midi: true,
+    recommended: 'auto' as AIEngine
+  };
+  enginesLoaded = false;
+
   // Multi-section song structure
   songSections: Array<{ type: string; duration: number; transition?: string }> = [
     { type: 'verse', duration: 16, transition: 'none' },
@@ -81,6 +91,47 @@ export class MainPageComponent {
   private musicGen = inject(MusicGenService);
   private audioPlayer = inject(AudioPlayerService);
 
+  ngOnInit() {
+    // Check which AI engines are available on the backend
+    this.musicGen.checkAvailableEngines().subscribe({
+      next: (engines) => {
+        this.availableEngines = engines;
+        this.selectedEngine = engines.recommended;
+        this.enginesLoaded = true;
+        console.log('Available AI engines:', engines);
+      },
+      error: (err) => {
+        console.error('Failed to check available engines:', err);
+        this.enginesLoaded = true;
+        // Fallback to MIDI only
+        this.availableEngines = {
+          audiocraft: false,
+          bark: false,
+          midi: true,
+          recommended: 'auto'
+        };
+      }
+    });
+  }
+
+  getEngineDisplayName(engine: AIEngine): string {
+    switch (engine) {
+      case 'audiocraft': return '🎸 AudioCraft (MusicGen)';
+      case 'bark': return '🎤 Bark TTS + MIDI';
+      case 'auto': return '✨ Auto (Best Available)';
+      default: return engine;
+    }
+  }
+
+  getEngineDescription(engine: AIEngine): string {
+    switch (engine) {
+      case 'audiocraft': return 'Full AI music generation with instruments and melody';
+      case 'bark': return 'AI vocals with MIDI instrumental backing';
+      case 'auto': return 'Automatically selects the best available engine';
+      default: return '';
+    }
+  }
+
   generateMusic() {
     this.loading = true;
     this.error = undefined;
@@ -93,7 +144,8 @@ export class MainPageComponent {
         this.vocal_artist,
         this.tempo,
         this.variation,
-        this.songSections // Pass sections to service
+        this.songSections,
+        this.selectedEngine  // Pass engine selection to service
       ).subscribe({
       next: (response) => {
         this.result = response;

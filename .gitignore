@@ -37,6 +37,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+.env
+.venv/
+venv/
 
 .nx/cache
 .nx/workspace-data

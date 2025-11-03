@@ -1,5 +1,0 @@
-# Olamma integration for musicgen
-ollama
-fastapi
-requests
-pydantic

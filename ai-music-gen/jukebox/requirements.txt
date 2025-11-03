@@ -1,0 +1,11 @@
+numpy<2.0.0
+# Required for text processing
+unidecode>=1.1.1
+torch>=2.0.0
+fire==0.1.3
+tqdm==4.45.0
+soundfile==0.10.3.post1
+unidecode==1.1.1
+numba==0.48.0
+librosa==0.7.2
+# mpi4py is only needed for distributed/multi-GPU. For CPU-only, you can omit it.

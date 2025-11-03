@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "title": "Python Executor",
+  "description": "Execute Python commands with proper environment setup",
+  "type": "object",
+  "properties": {
+    "command": {
+      "type": "string",
+      "description": "The Python command to execute (e.g., '-m pytest tests/')"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional arguments to pass to the command"
+    },
+    "cwd": {
+      "type": "string",
+      "description": "Working directory for the command"
+    },
+    "pythonPath": {
+      "type": "string",
+      "description": "Path to Python executable",
+      "default": "python"
+    },
+    "env": {
+      "type": "object",
+      "description": "Additional environment variables"
+    }
+  },
+  "required": ["command"]
+}

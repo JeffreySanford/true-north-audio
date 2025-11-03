@@ -17,8 +17,7 @@
           "passWithNoTests": true
         },
         "dependsOn": [
-          "@true-north-audio/backend:build",
-          "@true-north-audio/backend:serve"
+          "@true-north-audio/backend:build"
         ]
       },
       "lint": {

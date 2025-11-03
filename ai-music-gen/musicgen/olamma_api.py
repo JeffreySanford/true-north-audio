@@ -1,7 +1,8 @@
 """
 Olamma in-memory server scaffold for musicgen integration.
-This FastAPI app starts/stops Olamma in-memory for dev/test,
-and exposes endpoints for music generation.
+This FastAPI app provides a lightweight Ollama-compatible API for dev/test and
+proxies requests to our FastAPI backend. It does NOT start the real `ollama serve`
+process to avoid conflicts with its own Uvicorn server.
 """
 
 
@@ -14,17 +15,18 @@ import os
 
 app = FastAPI(title="Olamma In-Memory MusicGen API")
 
-# Configurable Olamma server params
+# Configurable params (kept for compatibility)
 OLAMMA_PORT = int(os.environ.get("OLAMMA_PORT", 11434))
 OLAMMA_HOST = os.environ.get("OLAMMA_HOST", "localhost")
-# Replace with actual model name
 OLAMMA_MODEL = os.environ.get("OLAMMA_MODEL", "musicgen")
-OLAMMA_BIN = os.environ.get("OLAMMA_BIN", "ollama")  # Path to ollama binary
+OLAMMA_BIN = os.environ.get("OLAMMA_BIN", "ollama")  # Not used here
 
 
 class MusicGenRequest(BaseModel):
     genre: str
     duration: Optional[int] = 10
+    engine: str
+    model: Optional[str] = "llama3.2"
     seed: Optional[int] = None
     idea: Optional[str] = None
     vocal_artist: Optional[str] = None
@@ -36,27 +38,11 @@ class MusicGenResponse(BaseModel):
     error: Optional[str] = None
 
 
-olamma_process = None
-
-
-@app.on_event("startup")
-def start_olamma():
-    global olamma_process
-    # Start Olamma server in-memory (subprocess)
-    try:
-        olamma_process = subprocess.Popen([
-            OLAMMA_BIN, "serve", "--port", str(OLAMMA_PORT)
-        ])
-    except Exception as e:
-        print("Failed to start Olamma: " + str(e))
-
-
-@app.on_event("shutdown")
-def stop_olamma():
-    global olamma_process
-    if olamma_process:
-        olamma_process.terminate()
-        olamma_process = None
+"""
+Note: We intentionally do NOT spawn `ollama serve` from this proxy. The proxy
+itself binds to port 11434 via Uvicorn; launching the real Ollama on the same port
+would lead to a port collision and can stall the overall start script.
+"""
 
 
 @app.post("/musicgen", response_model=MusicGenResponse)
@@ -70,6 +56,8 @@ def generate_music(request: MusicGenRequest):
             json={
                 "genre": request.genre,
                 "duration": request.duration,
+                "engine": request.engine,
+                "model": request.model,
                 "seed": request.seed,
                 "idea": request.idea,
                 "vocal_artist": request.vocal_artist,
@@ -97,13 +85,11 @@ def olamma_status():
     """
     Check if Olamma server is running.
     """
-    try:
-        url = "http://{}:{}/api/status".format(OLAMMA_HOST, OLAMMA_PORT)
-        response = requests.get(
-            url,
-            timeout=5
-        )
-        response.raise_for_status()
-        return {"status": "running"}
-    except Exception:
-        return {"status": "not running"}
+    # Since this is a proxy, consider it "running" if this service is up
+    return {"status": "running"}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    print("[Ollama Proxy] Starting on port 11434...")
+    uvicorn.run(app, host="0.0.0.0", port=11434)

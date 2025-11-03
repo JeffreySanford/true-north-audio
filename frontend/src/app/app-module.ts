@@ -1,6 +1,7 @@
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,11 +17,13 @@ import { App } from './app';
 import { MainPageComponent } from './main-page';
 import { HeaderComponent } from './header';
 import { FooterComponent } from './footer';
+import { MusicgenEngineSelectorComponent } from './musicgen-selector.component';
 
 @NgModule({
-  declarations: [App, MainPageComponent, HeaderComponent, FooterComponent],
+  declarations: [App, MainPageComponent, HeaderComponent, FooterComponent, MusicgenEngineSelectorComponent],
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
     HttpClientModule,
     MatCardModule,

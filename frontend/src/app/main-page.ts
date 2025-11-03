@@ -25,6 +25,7 @@ export class MainPageComponent {
       this.songSections.splice(i, 1);
     }
   }
+
   playMp3() {
     if (this.result?.audio_url) {
       const audioElem = document.getElementById('musicgen-audio') as HTMLAudioElement;
@@ -61,6 +62,7 @@ export class MainPageComponent {
       URL.revokeObjectURL(url);
     }
   }
+
   audioUrlNotFound = false;
   directSource?: AudioBufferSourceNode;
 
@@ -77,9 +79,16 @@ export class MainPageComponent {
   loading = false;
   result?: MusicGenResult;
   error?: string;
+  engine = 'Ollama';
+  model?: string;
 
   private musicGen = inject(MusicGenService);
   private audioPlayer = inject(AudioPlayerService);
+
+  onEngineChange(data: { engine: string; model?: string }) {
+    this.engine = data.engine;
+    this.model = data.model;
+  }
 
   generateMusic() {
     this.loading = true;
@@ -88,6 +97,8 @@ export class MainPageComponent {
       this.musicGen.generateMusic(
         this.genre,
         this.duration,
+        this.engine,
+        this.model,
         this.seed,
         this.idea,
         this.vocal_artist,

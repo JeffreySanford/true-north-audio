@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, map, tap, catchError, of } from 'rxjs';
 import { OlammaLog } from '../models/olamma-log.model';
 import { WorkspaceLogger } from '../app/workspace-logger';
 export interface MusicGenResult {
@@ -45,6 +45,8 @@ export class MusicGenService {
   generateMusic(
     genre: string,
     duration: number,
+    engine: string,
+    model?: string,
     seed?: number,
     idea?: string,
     vocal_artist?: string,
@@ -59,6 +61,8 @@ export class MusicGenService {
         {
           genre,
           duration,
+          engine,
+          model,
           seed,
           idea,
           vocal_artist,
@@ -72,14 +76,28 @@ export class MusicGenService {
         tap(async (result) => {
           // Log to MongoDB
           await this.olammaLogModel.create({
-            prompt: `Genre: ${genre}, Duration: ${duration}, Seed: ${seed}, Idea: ${idea}, VocalArtist: ${vocal_artist}, Tempo: ${tempo}, Variation: ${variation}, SongSections: ${JSON.stringify(songSections)}`,
+            prompt: `Genre: ${genre}, Duration: ${duration}, Engine: ${engine}, Model: ${model}, Seed: ${seed}, Idea: ${idea}, VocalArtist: ${vocal_artist}, Tempo: ${tempo}, Variation: ${variation}, SongSections: ${JSON.stringify(songSections)}`,
             audioUrl: result.audio_url || '',
             createdAt: new Date(),
           });
           // Log to workspace log file
           this.logger.info(
-            `MusicGen: genre=${genre}, duration=${duration}, seed=${seed}, idea=${idea}, vocal_artist=${vocal_artist}, tempo=${tempo}, variation=${variation}, songSections=${JSON.stringify(songSections)}, audioUrl=${result.audio_url}, error=${result.error}`
+            `MusicGen: genre=${genre}, duration=${duration}, engine=${engine}, model=${model}, seed=${seed}, idea=${idea}, vocal_artist=${vocal_artist}, tempo=${tempo}, variation=${variation}, songSections=${JSON.stringify(songSections)}, audioUrl=${result.audio_url}, error=${result.error}`
           );
+        }),
+        catchError((error) => {
+          const errorMessage = error.code === 'ECONNREFUSED' 
+            ? 'Ollama service is not running. Please start Ollama with: ollama serve'
+            : `Music generation failed: ${error.message}`;
+          
+          this.logger.error(`MusicGen Error: ${errorMessage}`, error.stack);
+          
+          // Return a user-friendly error response instead of throwing
+          return of({
+            waveform: '',
+            sample_rate: 0,
+            error: errorMessage
+          } as MusicGenResult);
         })
       );
   }

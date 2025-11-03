@@ -18,6 +18,8 @@ export class MusicGenService {
   generateMusic(
       genre: string,
       duration: number,
+      engine: string,
+      model?: string,
       seed?: number,
       idea?: string,
       vocal_artist?: string,
@@ -28,6 +30,8 @@ export class MusicGenService {
       return this.http.post<MusicGenResult>(`${this.BASE_URL}/musicgen/generate`, {
         genre,
         duration,
+        engine,
+        model,
         seed,
         idea,
         vocal_artist,

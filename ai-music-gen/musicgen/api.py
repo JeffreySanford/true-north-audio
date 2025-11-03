@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from ai_music_gen.musicgen.core import generate_music
+from .core import generate_music
+from .engines.stable_audio import generate_stable_audio_sample
+from .engines.riffusion import generate_riffusion_sample
+from .engines.openai_jukebox import generate_openai_jukebox_sample
+from .engines.ollama import generate_ollama_sample
 import numpy as np
 import base64
 import sys
@@ -30,32 +34,132 @@ class Section(BaseModel):
 class MusicRequest(BaseModel):
     genre: str = 'ambient'
     duration: int = 10
+    engine: str = 'MusicGen (Audiocraft)'
     seed: int | None = None
     idea: str | None = None
     vocal_artist: str = 'AI_Male_1'
     tempo: int = 120
     variation: str = 'original'
     songSections: list[Section] | None = None
+    lyrics: str | None = None
+    vocal_style: str = 'spoken'
 
 
 @app.post('/api/musicgen/generate')
 def generate_music_api(req: MusicRequest):
     """
-    Generate music using MusicGen and return waveform and
+    Generate music using MusicGen or Jukebox and return waveform and
     vocal transcription as base64 and text.
     Supports multi-section song generation if songSections is provided.
     """
     print(f"[FastAPI] Received request: genre={req.genre}", file=sys.stderr)
-    print(f"duration={req.duration}", file=sys.stderr)
-    print(f"seed={req.seed}", file=sys.stderr)
-    print(f"idea={req.idea}, "
-          f"vocal_artist={req.vocal_artist}", file=sys.stderr)
-    print(f"tempo={req.tempo}, "
-          f"variation={req.variation}", file=sys.stderr)
-    print(f"songSections={req.songSections}", file=sys.stderr)
-    if req.songSections:
+    print(f"engine={req.engine}", file=sys.stderr)
+    engine = req.engine.lower() if req.engine else ''
+    if 'jukebox' in engine:
+        # Use Jukebox backend
+        from ..jukebox.jukebox.generate_sample import generate_jukebox_sample
+        result = generate_jukebox_sample(
+            genre=req.genre,
+            duration=req.duration,
+            seed=req.seed,
+            idea=req.idea,
+            vocal_artist=req.vocal_artist,
+            tempo=req.tempo,
+            variation=req.variation,
+            songSections=req.songSections
+        )
+        waveform_bytes = result['waveform'].astype(np.float32).tobytes()
+        waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
+        audio_url = result.get('audio_url', '/audio/generated/jukebox_sample.mp3')
+        return {
+            "waveform": waveform_b64,
+            "sample_rate": result['sample_rate'],
+            "vocals": result['vocals'],
+            "audio_url": audio_url
+        }
+    elif 'stable audio' in engine:
+        result = generate_stable_audio_sample(
+            genre=req.genre,
+            duration=req.duration,
+            seed=req.seed,
+            idea=req.idea,
+            vocal_artist=req.vocal_artist,
+            tempo=req.tempo,
+            variation=req.variation,
+            songSections=req.songSections
+        )
+        waveform_bytes = result['waveform'].astype(np.float32).tobytes()
+        waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
+        audio_url = result.get('audio_url', '/audio/generated/stable_audio_sample.mp3')
+        return {
+            "waveform": waveform_b64,
+            "sample_rate": result['sample_rate'],
+            "vocals": result['vocals'],
+            "audio_url": audio_url
+        }
+    elif 'riffusion' in engine:
+        result = generate_riffusion_sample(
+            genre=req.genre,
+            duration=req.duration,
+            seed=req.seed,
+            idea=req.idea,
+            vocal_artist=req.vocal_artist,
+            tempo=req.tempo,
+            variation=req.variation,
+            songSections=req.songSections
+        )
+        waveform_bytes = result['waveform'].astype(np.float32).tobytes()
+        waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
+        audio_url = result.get('audio_url', '/audio/generated/riffusion_sample.mp3')
+        return {
+            "waveform": waveform_b64,
+            "sample_rate": result['sample_rate'],
+            "vocals": result['vocals'],
+            "audio_url": audio_url
+        }
+    elif 'openai jukebox' in engine:
+        result = generate_openai_jukebox_sample(
+            genre=req.genre,
+            duration=req.duration,
+            seed=req.seed,
+            idea=req.idea,
+            vocal_artist=req.vocal_artist,
+            tempo=req.tempo,
+            variation=req.variation,
+            songSections=req.songSections
+        )
+        waveform_bytes = result['waveform'].astype(np.float32).tobytes()
+        waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
+        audio_url = result.get('audio_url', '/audio/generated/openai_jukebox_sample.mp3')
+        return {
+            "waveform": waveform_b64,
+            "sample_rate": result['sample_rate'],
+            "vocals": result['vocals'],
+            "audio_url": audio_url
+        }
+    elif 'ollama' in engine:
+        result = generate_ollama_sample(
+            genre=req.genre,
+            duration=req.duration,
+            seed=req.seed,
+            idea=req.idea,
+            vocal_artist=req.vocal_artist,
+            tempo=req.tempo,
+            variation=req.variation,
+            songSections=req.songSections
+        )
+        waveform_bytes = result['waveform'].astype(np.float32).tobytes()
+        waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
+        audio_url = result.get('audio_url', '/audio/generated/ollama_sample.mp3')
+        return {
+            "waveform": waveform_b64,
+            "sample_rate": result['sample_rate'],
+            "vocals": result['vocals'],
+            "audio_url": audio_url
+        }
+    elif req.songSections:
         # Only import if actually used
-        from ai_music_gen.generator import generate_song
+        from ..generator import generate_song
         sections = [s.dict() for s in req.songSections]
         out_path = generate_song(sections, default_tempo=req.tempo)
         sample_rate = 32000
@@ -86,7 +190,9 @@ def generate_music_api(req: MusicRequest):
             req.idea,
             req.vocal_artist,
             req.tempo,
-            req.variation
+            req.variation,
+            req.lyrics,
+            req.vocal_style
         )
         waveform_bytes = result['waveform'].astype(np.float32).tobytes()
         waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
@@ -123,7 +229,7 @@ if __name__ == "__main__":
         file=sys.stderr
     )
     uvicorn.run(
-        "ai_music_gen.musicgen.api:app",
+        "musicgen.api:app",
         host="0.0.0.0",
         port=8000,
         reload=False

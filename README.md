@@ -1,4 +1,3 @@
-
 # True North Audio: Nx Monorepo Music Maker
 
 
@@ -43,35 +42,43 @@ True North Audio is a local-first, AI-powered music and video asset creator, bui
 
 
 ## Getting Started
+
 1. Install dependencies: `pnpm install`
-2. Install Angular Material (required for frontend UI):
-  - At workspace root: `pnpm add -w @angular/material @angular/cdk`
-  - If you see EPERM or permission errors, close all editors/servers, ensure write access, and retry. You may need to run as administrator.
-3. Run all lint/build/test/serve tasks via Nx or pnpm scripts (see below). Never use underlying tooling directly.
-4. Run backend: `nx serve backend` (must be running before frontend for proxy)
-5. Run frontend: `nx serve frontend --proxy-config=src/proxy.conf.json`
-6. To generate longer songs, set the duration slider up to 180 seconds in the UI. For multi-section songs, see planned features below.
+2. **Windows Only:** Install Visual Studio Build Tools for Python package compilation (required for AI/musicgen):
+   - Run `bash setup-windows-build-tools.sh` from the workspace root, or manually download and run the installer:
+     - `curl -LO https://aka.ms/vs/17/release/vs_BuildTools.exe`
+     - `./vs_BuildTools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.Windows10SDK.20348 --includeRecommended`
+   - This step is required for building scientific Python packages (NumPy, Audiocraft, etc.) on Windows.
+3. Install Angular Material (required for frontend UI):
+   - At workspace root: `pnpm add -w @angular/material @angular/cdk`
+   - If you see EPERM or permission errors, close all editors/servers, ensure write access, and retry. You may need to run as administrator.
+4. Run all lint/build/test/serve tasks via Nx or pnpm scripts (see below). Never use underlying tooling directly.
+5. Start development services with `pnpm dev` (runs `serve-dev.sh`, which builds the backend once and launches backend + frontend together).
+6. If you need fine-grained control, you can still start the backend via `nx serve backend` and the frontend via `nx serve frontend --proxy-config=src/proxy.conf.json`.
+7. To generate longer songs, set the duration slider up to 180 seconds in the UI. For multi-section songs, see planned features below.
 
 
 ## Nx Scripts & Workflow
 Run tasks for individual projects or all at once. All scripts are guaranteed to only operate on source files (never build artifacts):
 - Lint: `pnpm lint:backend`, `pnpm lint:frontend`, `pnpm lint:all`
 - Build: `pnpm build:backend`, `pnpm build:frontend`, `pnpm build:all`
-- Serve: `pnpm serve:backend`, `pnpm serve:frontend`, `pnpm serve:all` (includes proxy config)
+- Serve: `pnpm dev` (recommended dev flow), `pnpm serve:backend`, `pnpm serve:frontend`, `pnpm serve:all` (includes proxy config)
 - Test: `pnpm test:backend`, `pnpm test:frontend`, `pnpm test:all`
 
 
 
 
 ## Frontend Notes
-- All Angular Material components used in the UI must be imported in `AppModule` (see `src/app/app-module.ts`).
-- `FormsModule` is required for `ngModel` support.
-- The main page uses a vibrant, animated Material Design 3 layout, with:
+All Angular Material components used in the UI must be imported in `AppModule` (see `src/app/app-module.ts`).
+`FormsModule` is required for `ngModel` support.
+The main page uses a vibrant, animated Material Design 3 layout, with:
   - `mat-card`, `mat-form-field`, `mat-select`, `mat-slider`, `mat-expansion-panel`, `mat-chip-list`, and more
   - Advanced options for music generation (genre, duration up to 180s, seed, variation, tempo)
   - Future extensibility for video, remix, vocal/instrumental, multi-section songs, and more
   - All UI fits between header and footer, with responsive and stylish design
-- If you see errors about unknown Material elements or `ngModel`, check your module imports and that Material/CDK are installed.
+**Music Generation Backend Selector:**
+The UI includes a backend selector component (`MusicgenSelectorComponent`) that allows users to choose between supported music generation backends (e.g., MusicGen, Jukebox). This Angular Material component is located in `src/app/musicgen-selector.component.ts` with corresponding HTML, SCSS, and spec files. Ensure `AppModule` imports all required Angular Material modules and `FormsModule` for proper functionality. The selector is fully integrated into the workspace lint/build/test scripts.
+If you see errors about unknown Material elements or `ngModel`, check your module imports and that Material/CDK are installed.
 
 
 
@@ -85,4 +92,17 @@ Run tasks for individual projects or all at once. All scripts are guaranteed to 
 - Song arrangement and transitions
 - Lyrics and vocal synthesis (future)
 - Video asset management
+
+
+## Example: Generate a Full Song with Ollama
+
+To generate a modern hiphop version of a 1940's classic (e.g., "The Best Is Yet To Come" by Dean Martin) using the Ollama engine, run:
+
+```bash
+python ai-music-gen/ollama_song_sample.py
+```
+
+This will create a full-length song sample (3 minutes, multi-section) using the Ollama engine. You can customize the genre, idea, vocal artist, tempo, and song structure in the script.
+
+Ollama is the default engine in the UI and backend, designed for exclusive local AI music generation. Extend the engine logic in `musicgen/engines/ollama.py` to connect to your own models or APIs.
 

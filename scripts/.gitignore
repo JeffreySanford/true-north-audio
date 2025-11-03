@@ -1,0 +1,11 @@
+
+# Generated audio files (large binaries, don't commit)
+*.mp3
+*.wav
+backend/src/assets/generated/
+ai-music-gen/backend/src/assets/generated/
+test_bark_output.wav
+
+# Bark model cache (huge files)
+*.pt
+.cache/

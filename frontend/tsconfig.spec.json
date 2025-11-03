@@ -2,17 +2,18 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/jest",
-  "target": "es2016",
-  "types": ["jest", "node"],
-  "lib": ["es2020"],
-  "module": "nodenext",
-  "moduleResolution": "nodenext"
+    "target": "es2016",
+    "types": ["jest", "node"],
+    "lib": ["es2020"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext"
   },
   "files": [
     "src/test-setup.ts",
     "src/app/app.ts",
     "src/app/main-page.ts",
-    "src/app/header.ts"
+    "src/app/header.ts",
+    "src/app/musicgen-selector.component.ts"
   ],
   "include": [
     "jest.config.ts",

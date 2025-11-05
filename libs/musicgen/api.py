@@ -2,27 +2,21 @@
 
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
-from libs.musicgen.core import generate_music
+# Import from musicgen.core (the real implementation in ai-music-gen/musicgen/)
+# instead of libs.musicgen.core (the stub that just returns random noise)
+# PYTHONPATH includes 'ai-music-gen' so 'musicgen' resolves to ai-music-gen/musicgen/
+from musicgen.core import generate_music
 import numpy as np
 import base64
 import sys
 
 app = FastAPI()
 
-from fastapi import FastAPI, Query
-from pydantic import BaseModel
-from libs.musicgen.core import generate_music
-import numpy as np
-import base64
-import sys
-
-app = FastAPI()
-
-# Import test endpoint to verify ai_music_gen.generator import
+# Import test endpoint to verify generator import
 @app.get('/api/musicgen/import-test')
 def import_test():
     try:
-        from ai_music_gen.generator import generate_song
+        from generator import generate_song
         return {"status": "success", "detail": "Import succeeded."}
     except Exception as e:
         return {"status": "error", "detail": str(e)}
@@ -38,6 +32,8 @@ class Section(BaseModel):
 class MusicRequest(BaseModel):
     genre: str = 'ambient'
     duration: int = 10
+    engine: str = 'musicgen'
+    model: str | None = 'llama3.2'
     seed: int | None = None
     idea: str | None = None
     vocal_artist: str = 'AI_Male_1'
@@ -52,9 +48,31 @@ def generate_music_api(req: MusicRequest):
     Generate music using MusicGen and return waveform and vocal transcription as base64 and text.
     Supports multi-section song generation if songSections is provided.
     """
-    print(f"[FastAPI] Received request: genre={req.genre}, duration={req.duration}, seed={req.seed}, idea={req.idea}, vocal_artist={req.vocal_artist}, tempo={req.tempo}, variation={req.variation}, songSections={req.songSections}", file=sys.stderr)
-    if req.songSections:
-        from ai_music_gen.generator import generate_song
+    print(f"[FastAPI] Received request: genre={req.genre}, duration={req.duration}, engine={req.engine}, model={req.model}, seed={req.seed}, idea={req.idea}, vocal_artist={req.vocal_artist}, tempo={req.tempo}, variation={req.variation}, songSections={req.songSections}", file=sys.stderr)
+    if req.engine.lower() == 'ollama':
+        # Use Ollama for lyric generation
+        try:
+            from engines.ollama import generate_ollama_sample
+            output = generate_ollama_sample(req.genre, req.idea or 'a pop song', req.model or 'llama3.2')
+            vocals = output.get('vocals', 'No lyrics generated')
+            # Return dummy waveform for now, since Ollama is for lyrics
+            sample_rate = 32000
+            waveform = np.random.uniform(-1, 1, sample_rate * req.duration).astype(np.float32)
+            waveform_bytes = waveform.astype(np.float32).tobytes()
+            waveform_b64 = base64.b64encode(waveform_bytes).decode('utf-8')
+            audio_url = f"/audio/generated/{req.genre}_ollama_{req.seed or 0}.wav"
+            return {
+                "waveform": waveform_b64,
+                "sample_rate": sample_rate,
+                "vocals": vocals,
+                "audio_url": audio_url
+            }
+        except Exception as e:
+            return {
+                "error": f"Ollama generation failed: {str(e)}"
+            }
+    elif req.songSections:
+        from generator import generate_song
         # Convert Pydantic Section objects to dicts
         sections = [s.dict() for s in req.songSections]
         out_path = generate_song(sections, default_tempo=req.tempo)

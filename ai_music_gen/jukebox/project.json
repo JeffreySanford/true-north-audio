@@ -1,0 +1,19 @@
+{
+  "name": "jukebox",
+  "root": "ai-music-gen/jukebox",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["ai-music-gen/jukebox/**/*.py"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "ai-music-gen/jukebox/generate_sample.py"
+      }
+    }
+  }
+}

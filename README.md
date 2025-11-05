@@ -1,4 +1,3 @@
-
 # True North Audio: Nx Monorepo Music Maker
 
 
@@ -53,8 +52,25 @@ True North Audio is a local-first, AI-powered music and video asset creator, bui
 
 
 ## Hardware & Deployment
-- Optimized for local use on i7/i9 CPUs, NVIDIA GPUs
-- Easy migration to cloud (DigitalOcean, Docker, etc.)
+
+### Current Development Configuration (November 2025)
+This project is optimized for high-performance local AI music generation:
+- **CPU**: 16+ cores (Intel i9/AMD Ryzen 9 recommended)
+- **RAM**: 32GB+ (64GB recommended for large models)
+- **GPU**: NVIDIA GPU with 8GB+ VRAM (GTX 1080, RTX 3060, RTX 4070+)
+- **Storage**: SSD with 50GB+ free space for models and generated assets
+
+### Supported Deployment Options
+- **Local Development**: Full-featured with GPU acceleration (recommended)
+- **Cloud Hybrid**: Cloud APIs (Suno/Udio) + local processing
+- **Cloud Deployment**: DigitalOcean, Docker, Kubernetes (future)
+
+### AI Music Generation Engines
+1. **Suno AI** (Cloud): Professional quality, 50 songs/day free tier
+2. **Udio AI** (Cloud): Professional quality, 3 songs/day free tier  
+3. **Meta MusicGen** (Local): 100% private, unlimited generations, requires GPU
+
+See [docs/hardware-requirements.md](docs/hardware-requirements.md) for detailed specifications and [docs/ai-integration.md](docs/ai-integration.md) for engine configuration.
 
 
 
@@ -62,13 +78,20 @@ True North Audio is a local-first, AI-powered music and video asset creator, bui
 
 ### Quick Start (5 minutes)
 1. **Install dependencies:** `pnpm install` (auto-installs Python requirements)
-2. **Install Angular Material:**
+2. **Windows Only:** Install Visual Studio Build Tools for Python package compilation (required for AI/musicgen):
+   - Run `bash setup-windows-build-tools.sh` from the workspace root, or manually download and run the installer:
+     - `curl -LO https://aka.ms/vs/17/release/vs_BuildTools.exe`
+     - `./vs_BuildTools.exe --quiet --wait --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.Windows10SDK.20348 --includeRecommended`
+   - This step is required for building scientific Python packages (NumPy, Audiocraft, etc.) on Windows.
+3. **Install Angular Material:**
    ```bash
    pnpm add -w @angular/material @angular/cdk
    ```
-3. **Start backend:** `nx serve backend` (must run first for proxy)
-4. **Start frontend:** `nx serve frontend --proxy-config=src/proxy.conf.json`
-5. **Visit:** http://localhost:4200
+   - If you see EPERM or permission errors, close all editors/servers, ensure write access, and retry. You may need to run as administrator.
+4. **Start backend:** `nx serve backend` (must run first for proxy)
+5. **Start frontend:** `nx serve frontend --proxy-config=src/proxy.conf.json`
+6. **Visit:** http://localhost:4200
+7. Or, start all dev services with `pnpm dev` (runs `serve-dev.sh`, which builds backend and launches backend + frontend together).
 
 ### AI Engine Setup (Optional)
 
@@ -113,32 +136,78 @@ See [INSTALLATION_CHECKLIST.md](INSTALLATION_CHECKLIST.md) for detailed setup in
 Run tasks for individual projects or all at once. All scripts are guaranteed to only operate on source files (never build artifacts):
 - Lint: `pnpm lint:backend`, `pnpm lint:frontend`, `pnpm lint:all`
 - Build: `pnpm build:backend`, `pnpm build:frontend`, `pnpm build:all`
-- Serve: `pnpm serve:backend`, `pnpm serve:frontend`, `pnpm serve:all` (includes proxy config)
+- Serve: `pnpm dev` (recommended dev flow), `pnpm serve:backend`, `pnpm serve:frontend`, `pnpm serve:all` (includes proxy config)
 - Test: `pnpm test:backend`, `pnpm test:frontend`, `pnpm test:all`
 
 
 
 
 ## Frontend Notes
-- All Angular Material components used in the UI must be imported in `AppModule` (see `src/app/app-module.ts`).
-- `FormsModule` is required for `ngModel` support.
-- The main page uses a vibrant, animated Material Design 3 layout, with:
+All Angular Material components used in the UI must be imported in `AppModule` (see `src/app/app-module.ts`).
+`FormsModule` is required for `ngModel` support.
+The main page uses a vibrant, animated Material Design 3 layout, with:
   - `mat-card`, `mat-form-field`, `mat-select`, `mat-slider`, `mat-expansion-panel`, `mat-chip-list`, and more
   - Advanced options for music generation (genre, duration up to 180s, seed, variation, tempo)
   - Future extensibility for video, remix, vocal/instrumental, multi-section songs, and more
   - All UI fits between header and footer, with responsive and stylish design
-- If you see errors about unknown Material elements or `ngModel`, check your module imports and that Material/CDK are installed.
+**Music Generation Backend Selector:**
+The UI includes a backend selector component (`MusicgenSelectorComponent`) that allows users to choose between supported music generation backends (e.g., MusicGen, Jukebox). This Angular Material component is located in `src/app/musicgen-selector.component.ts` with corresponding HTML, SCSS, and spec files. Ensure `AppModule` imports all required Angular Material modules and `FormsModule` for proper functionality. The selector is fully integrated into the workspace lint/build/test scripts.
+If you see errors about unknown Material elements or `ngModel`, check your module imports and that Material/CDK are installed.
 
 
 
 ## Documentation
-- All endpoints must be documented in `API_ENDPOINTS.md`.
-- See `/docs` for detailed guides on architecture, features, and usage.
-- All new features and endpoints (including multi-section song generation) must be documented and tested before merging.
+
+### Core Documentation
+- **[README.md](README.md)** - This file, project overview and quick start
+- **[API_ENDPOINTS.md](API_ENDPOINTS.md)** - Complete API endpoint reference
+
+### Setup & Migration
+- **[MACHINE-SETUP-CHECKLIST.md](docs/MACHINE-SETUP-CHECKLIST.md)** - Quick and detailed setup guides
+- **[MIGRATION-CHECKLIST.md](docs/MIGRATION-CHECKLIST.md)** - Moving to new hardware
+- **[setup-guide-high-performance.md](docs/setup-guide-high-performance.md)** - High-performance machine setup
+
+### Architecture & Design
+- **[architecture.md](docs/architecture.md)** - System architecture overview
+- **[frontend-architecture.md](docs/frontend-architecture.md)** - Angular frontend design
+- **[backend.md](docs/backend.md)** - NestJS backend architecture
+- **[data-models.md](docs/data-models.md)** - Database schemas and models
+- **[data-flow.md](docs/data-flow.md)** - Data flow and communication
+
+### AI Integration
+- **[ai-integration.md](docs/ai-integration.md)** - Multi-engine AI architecture (Suno, Udio, MusicGen)
+- **[hardware-requirements.md](docs/hardware-requirements.md)** - Hardware specs and GPU configuration
+- **[ollama-engine.md](docs/ollama-engine.md)** - Ollama integration for lyrics generation
+- **[ollama-setup.md](docs/ollama-setup.md)** - Ollama installation and configuration
+
+### Testing
+- **[TESTING-GUIDE.md](docs/TESTING-GUIDE.md)** - Comprehensive testing guide for all engines
+- Run automated tests: `bash scripts/test-all-engines.sh`
+
+### Features & Usage
+- **[features.md](docs/features.md)** - Feature list and roadmap
+- **[user-management.md](docs/user-management.md)** - RBAC and authentication
+- **[video-roadmap.md](docs/video-roadmap.md)** - Video feature planning
+
+### Development Guidelines
+All new features and endpoints (including multi-section song generation) must be documented and tested before merging.
 
 ## Planned Features
 - Multi-section song generation (verse, chorus, bridge, etc.)
 - Song arrangement and transitions
 - Lyrics and vocal synthesis (future)
 - Video asset management
+
+
+## Example: Generate a Full Song with Ollama
+
+To generate a modern hiphop version of a 1940's classic (e.g., "The Best Is Yet To Come" by Dean Martin) using the Ollama engine, run:
+
+```bash
+python ai-music-gen/ollama_song_sample.py
+```
+
+This will create a full-length song sample (3 minutes, multi-section) using the Ollama engine. You can customize the genre, idea, vocal artist, tempo, and song structure in the script.
+
+Ollama is the default engine in the UI and backend, designed for exclusive local AI music generation. Extend the engine logic in `musicgen/engines/ollama.py` to connect to your own models or APIs.
 

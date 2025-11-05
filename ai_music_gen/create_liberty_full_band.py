@@ -27,54 +27,54 @@ print()
 
 def create_full_band_midi():
     """Create MASSIVE Chicago blues band arrangement"""
-    print("🎵 Creating FULL BAND arrangement with 8 instruments...\n")
+    print("🎵 Creating COUNTRY BAND arrangement with 5 instruments...\n")
 
     mid = MidiFile(ticks_per_beat=TICKS_PER_BEAT)
     tempo = int(60_000_000 / BPM)
 
-    # Channel assignments
-    LEAD_GUITAR = 0
-    RHYTHM_GUITAR = 1
-    ORGAN = 2
-    PIANO = 3
-    BASS = 4
-    HARMONICA = 5
-    SAX = 6
-    DRUMS = 9
+    # Channel assignments (General MIDI)
+    LEAD_GUITAR = 0  # Acoustic Guitar (Steel) - Program 25
+    RHYTHM_GUITAR = 1  # Acoustic Guitar (Nylon) - Program 24
+    BASS = 2  # Acoustic Bass - Program 33
+    BRASS = 3  # Trumpet - Program 57
+    DRUMS = 9  # Standard Drum Kit
 
     # Create tracks
     tracks = {
         'lead_guitar': MidiTrack(),
         'rhythm_guitar': MidiTrack(),
-        'organ': MidiTrack(),
-        'piano': MidiTrack(),
         'bass': MidiTrack(),
-        'harmonica': MidiTrack(),
-        'sax': MidiTrack(),
+        'brass': MidiTrack(),
         'drums': MidiTrack()
     }
 
+    # Assign realistic instrument program numbers
+    tracks['lead_guitar'].append(Message('program_change', program=25, channel=LEAD_GUITAR, time=0))
+    tracks['rhythm_guitar'].append(Message('program_change', program=24, channel=RHYTHM_GUITAR, time=0))
+    tracks['bass'].append(Message('program_change', program=33, channel=BASS, time=0))
+    tracks['brass'].append(Message('program_change', program=57, channel=BRASS, time=0))
+    # Drums do not need program_change
     for track in tracks.values():
         track.append(MetaMessage('set_tempo', tempo=tempo, time=0))
         mid.tracks.append(track)
 
-    # E minor blues scale for Liberty Blues
-    blues_scale = [52, 55, 57, 58, 59, 62, 64, 67, 69, 71]  # E blues scale
+    # E major country scale for Liberty Blues
+    country_scale = [52, 54, 56, 57, 59, 61, 64, 66, 68, 71]  # E major scale
 
-    # 12-bar blues progression in E minor
+    # 12-bar country progression in E major
     chord_progression = [
-        ('Em7', [52, 55, 59, 62]),  # E-G-B-D (bars 1-4)
-        ('Em7', [52, 55, 59, 62]),
-        ('Em7', [52, 55, 59, 62]),
-        ('Em7', [52, 55, 59, 62]),
-        ('Am7', [45, 48, 52, 55]),  # A-C-E-G (bars 5-6)
-        ('Am7', [45, 48, 52, 55]),
-        ('Em7', [52, 55, 59, 62]),  # Back to Em7 (bars 7-8)
-        ('Em7', [52, 55, 59, 62]),
-        ('Bm7', [47, 50, 54, 57]),  # B-D-F#-A (bar 9)
-        ('Am7', [45, 48, 52, 55]),  # Am7 (bar 10)
-        ('Em7', [52, 55, 59, 62]),  # Em7 (bar 11)
-        ('Bm7', [47, 50, 54, 57]),  # Bm7 turnaround (bar 12)
+        ('E', [52, 56, 59]),  # E-G#-B (bars 1-4)
+        ('E', [52, 56, 59]),
+        ('E', [52, 56, 59]),
+        ('E', [52, 56, 59]),
+        ('A', [57, 61, 64]),  # A-C#-E (bars 5-6)
+        ('A', [57, 61, 64]),
+        ('E', [52, 56, 59]),  # Back to E (bars 7-8)
+        ('E', [52, 56, 59]),
+        ('B', [59, 63, 66]),  # B-D#-F# (bar 9)
+        ('A', [57, 61, 64]),  # A (bar 10)
+        ('E', [52, 56, 59]),  # E (bar 11)
+        ('B', [59, 63, 66]),  # B turnaround (bar 12)
     ]
 
     bars_per_beat = TICKS_PER_BEAT
@@ -84,260 +84,87 @@ def create_full_band_midi():
     num_choruses = 9
     total_bars = num_choruses * 12 + 16  # +16 for intro
 
-    print("🎸 Lead Guitar - Blues licks with bends...")
-    # Lead guitar (existing style but enhanced)
-    time = bars_per_bar * 16  # Skip intro
+    print("🎸 Lead Guitar - Country licks and fills...")
+    # Lead guitar - simple country licks, humanized
+    time = bars_per_bar * 16
     for chorus in range(num_choruses):
         for bar_num, (chord, notes) in enumerate(chord_progression):
-            if bar_num in [3, 7, 11]:  # Fills at phrase ends
-                for _ in range(4):
-                    note = np.random.choice(blues_scale) + 12
-                    vel = np.random.randint(90, 110)
-                    tracks['lead_guitar'].append(
-                        Message(
-                            'note_on',
-                            note=note,
-                            velocity=vel,
-                            time=time,
-                            channel=LEAD_GUITAR))
-                    time = bars_per_beat // 2
-                    tracks['lead_guitar'].append(
-                        Message(
-                            'note_off',
-                            note=note,
-                            velocity=0,
-                            time=time,
-                            channel=LEAD_GUITAR))
-                    time = 0
-                    # Random bends
-                    if np.random.random() > 0.5:
-                        tracks['lead_guitar'].append(
-                            Message(
-                                'pitchwheel',
-                                pitch=4096,
-                                time=0,
-                                channel=LEAD_GUITAR))
-                        time = bars_per_beat // 4
-                        tracks['lead_guitar'].append(
-                            Message(
-                                'pitchwheel',
-                                pitch=0,
-                                time=time,
-                                channel=LEAD_GUITAR))
-                        time = 0
+            # Play root and fifth, add fills at ends
+            for beat in range(4):
+                note = notes[0] + 12 if beat % 2 == 0 else notes[2] + 12
+                vel = 95 + np.random.randint(-10, 10)
+                time_offset = bars_per_beat // 2 + np.random.randint(-10, 10)
+                tracks['lead_guitar'].append(
+                    Message('note_on', note=note, velocity=vel, time=time, channel=LEAD_GUITAR))
+                tracks['lead_guitar'].append(
+                    Message('note_off', note=note, velocity=0, time=time_offset, channel=LEAD_GUITAR))
+                time = bars_per_beat - time_offset
+            # Simple fill at end of phrase
+            if bar_num in [3, 7, 11]:
+                fill_note = country_scale[np.random.randint(0, len(country_scale))] + 12
+                tracks['lead_guitar'].append(
+                    Message('note_on', note=fill_note, velocity=100, time=time, channel=LEAD_GUITAR))
+                tracks['lead_guitar'].append(
+                    Message('note_off', note=fill_note, velocity=0, time=bars_per_beat // 2, channel=LEAD_GUITAR))
+                time = bars_per_beat // 2
             else:
                 time += bars_per_bar
 
-    print("🎸 Rhythm Guitar - Choppy shuffle...")
-    # Rhythm guitar chords on 2 and 4
+    print("🎸 Rhythm Guitar - Country strumming...")
+    # Rhythm guitar - simple strumming pattern
     time = bars_per_bar * 16
     for chorus in range(num_choruses):
         for chord, notes in chord_progression:
             for beat in range(4):
-                if beat in [1, 3]:  # Backbeat
-                    for note in notes[1:]:
-                        tracks['rhythm_guitar'].append(
-                            Message(
-                                'note_on',
-                                note=note + 12,
-                                velocity=70,
-                                time=time,
-                                channel=RHYTHM_GUITAR))
-                    time = bars_per_beat // 4
-                    for note in notes[1:]:
-                        tracks['rhythm_guitar'].append(
-                            Message(
-                                'note_off',
-                                note=note + 12,
-                                velocity=0,
-                                time=time,
-                                channel=RHYTHM_GUITAR))
-                    time = bars_per_beat - (bars_per_beat // 4)
-                else:
-                    time += bars_per_beat
+                for note in notes:
+                    vel = 80 + np.random.randint(-10, 10)
+                    time_offset = bars_per_beat // 3 + np.random.randint(-5, 5)
+                    tracks['rhythm_guitar'].append(
+                        Message('note_on', note=note + 12, velocity=vel, time=time, channel=RHYTHM_GUITAR))
+                    tracks['rhythm_guitar'].append(
+                        Message('note_off', note=note + 12, velocity=0, time=time_offset, channel=RHYTHM_GUITAR))
+                    time = bars_per_beat - time_offset
+                time += bars_per_beat
 
-    print("🎹 Hammond B3 Organ - Sustained chords with Leslie...")
-    # Organ - sustained chords throughout
-    time = bars_per_bar * 16
-    for chorus in range(num_choruses):
-        for chord, notes in chord_progression:
-            # All chord notes sustained
-            for note in notes:
-                tracks['organ'].append(
-                    Message(
-                        'note_on',
-                        note=note + 12,
-                        velocity=65,
-                        time=time,
-                        channel=ORGAN))
-            time = bars_per_bar - 100
-            for note in notes:
-                tracks['organ'].append(
-                    Message(
-                        'note_off',
-                        note=note + 12,
-                        velocity=0,
-                        time=time,
-                        channel=ORGAN))
-            time = 100
+    # ...existing code...
 
-    print("🎹 Piano - Bluesy comping and fills...")
-    # Piano - comping with occasional runs
-    time = bars_per_bar * 16
-    for chorus in range(num_choruses):
-        for bar_num, (chord, notes) in enumerate(chord_progression):
-            # Comp on beats 1 and 3
-            for beat in [0, 2]:
-                # Play root and fifth
-                tracks['piano'].append(
-                    Message(
-                        'note_on',
-                        note=notes[0],
-                        velocity=75,
-                        time=time,
-                        channel=PIANO))
-                tracks['piano'].append(
-                    Message(
-                        'note_on',
-                        note=notes[2],
-                        velocity=75,
-                        time=0,
-                        channel=PIANO))
-                time = bars_per_beat // 2
-                tracks['piano'].append(
-                    Message(
-                        'note_off',
-                        note=notes[0],
-                        velocity=0,
-                        time=time,
-                        channel=PIANO))
-                tracks['piano'].append(
-                    Message(
-                        'note_off',
-                        note=notes[2],
-                        velocity=0,
-                        time=0,
-                        channel=PIANO))
-                time = bars_per_beat // 2
-
-            # Add bluesy run at end of some bars
-            if bar_num in [7, 11]:
-                for note in blues_scale[3:7]:
-                    tracks['piano'].append(
-                        Message(
-                            'note_on',
-                            note=note + 12,
-                            velocity=80,
-                            time=time,
-                            channel=PIANO))
-                    time = bars_per_beat // 8
-                    tracks['piano'].append(
-                        Message(
-                            'note_off',
-                            note=note + 12,
-                            velocity=0,
-                            time=time,
-                            channel=PIANO))
-                    time = 0
-
-    print("🎵 Walking Bass - Strong foundation...")
-    # Bass (same as before)
+    print(" Bass - Country walking bass...")
+    # Bass - simple walking pattern, humanized
     time = bars_per_bar * 16
     for chorus in range(num_choruses):
         for chord, notes in chord_progression:
             root = notes[0]
             pattern = [root, root + 2, notes[2], root + 4]
             for note in pattern:
+                vel = 90 + np.random.randint(-10, 10)
+                time_offset = bars_per_beat // 2 + np.random.randint(-10, 10)
                 tracks['bass'].append(
-                    Message(
-                        'note_on',
-                        note=note - 12,
-                        velocity=100,
-                        time=time,
-                        channel=BASS))
-                time = bars_per_beat
+                    Message('note_on', note=note - 12, velocity=vel, time=time, channel=BASS))
                 tracks['bass'].append(
-                    Message(
-                        'note_off',
-                        note=note - 12,
-                        velocity=0,
-                        time=time,
-                        channel=BASS))
-                time = 0
+                    Message('note_off', note=note - 12, velocity=0, time=time_offset, channel=BASS))
+                time = bars_per_beat - time_offset
 
-    print("🎺 Harmonica - Wailing blues harp...")
-    # Harmonica - fills and accents
-    time = bars_per_bar * 16
-    for chorus in range(num_choruses):
-        for bar_num in range(12):
-            if bar_num in [3, 7, 11]:  # Wailing fills
-                for _ in range(3):
-                    note = np.random.choice(
-                        blues_scale[4:]) + 24  # High register
-                    vel = np.random.randint(85, 100)
-                    tracks['harmonica'].append(
-                        Message(
-                            'note_on',
-                            note=note,
-                            velocity=vel,
-                            time=time,
-                            channel=HARMONICA))
-                    time = bars_per_beat // 3
-                    tracks['harmonica'].append(
-                        Message(
-                            'note_off',
-                            note=note,
-                            velocity=0,
-                            time=time,
-                            channel=HARMONICA))
-                    time = bars_per_beat // 3
-            else:
-                time += bars_per_bar
+    # ...existing code...
 
-    print("🎷 Saxophone - Horn stabs and riffs...")
-    # Sax - horn section stabs
+    print("� Brass - Simple horn stabs...")
+    # Brass - simple stabs on chord changes
     time = bars_per_bar * 16
     for chorus in range(num_choruses):
         for bar_num, (chord, notes) in enumerate(chord_progression):
-            # Horn stabs on strong beats
-            if bar_num in [0, 4, 8]:  # Chord changes
-                for beat in [0, 2]:
-                    # Play third and fifth of chord
-                    tracks['sax'].append(
-                        Message(
-                            'note_on',
-                            note=notes[1] + 12,
-                            velocity=95,
-                            time=time,
-                            channel=SAX))
-                    tracks['sax'].append(
-                        Message(
-                            'note_on',
-                            note=notes[2] + 12,
-                            velocity=95,
-                            time=0,
-                            channel=SAX))
-                    time = bars_per_beat // 2
-                    tracks['sax'].append(
-                        Message(
-                            'note_off',
-                            note=notes[1] + 12,
-                            velocity=0,
-                            time=time,
-                            channel=SAX))
-                    tracks['sax'].append(
-                        Message(
-                            'note_off',
-                            note=notes[2] + 12,
-                            velocity=0,
-                            time=0,
-                            channel=SAX))
-                    time = bars_per_beat // 2
+            if bar_num in [0, 4, 8]:
+                for note in notes:
+                    vel = 100 + np.random.randint(-10, 10)
+                    time_offset = bars_per_beat // 2 + np.random.randint(-10, 10)
+                    tracks['brass'].append(
+                        Message('note_on', note=note + 12, velocity=vel, time=time, channel=BRASS))
+                    tracks['brass'].append(
+                        Message('note_off', note=note + 12, velocity=0, time=time_offset, channel=BRASS))
+                    time = bars_per_beat - time_offset
             else:
                 time += bars_per_bar
 
-    print("🥁 Drums - Full shuffle groove...")
-    # Drums (enhanced)
+    print("🥁 Drums - Country groove...")
+    # Drums - simple country groove, humanized
     kick, snare, hihat = 36, 38, 42
     time = bars_per_bar * 16
     for chorus in range(num_choruses):
@@ -345,92 +172,42 @@ def create_full_band_midi():
             for beat in range(4):
                 # Kick on 1 and 3
                 if beat in [0, 2]:
+                    vel = 100 + np.random.randint(-10, 10)
                     tracks['drums'].append(
-                        Message(
-                            'note_on',
-                            note=kick,
-                            velocity=105,
-                            time=time,
-                            channel=DRUMS))
-                    time = 20
+                        Message('note_on', note=kick, velocity=vel, time=time, channel=DRUMS))
                     tracks['drums'].append(
-                        Message(
-                            'note_off',
-                            note=kick,
-                            velocity=0,
-                            time=time,
-                            channel=DRUMS))
-                    time = 0
-
-                # Snare on 2 and 4 (backbeat)
+                        Message('note_off', note=kick, velocity=0, time=bars_per_beat // 4, channel=DRUMS))
+                    time = bars_per_beat // 2
+                # Snare on 2 and 4
                 if beat in [1, 3]:
+                    vel = 90 + np.random.randint(-10, 10)
                     tracks['drums'].append(
-                        Message(
-                            'note_on',
-                            note=snare,
-                            velocity=100,
-                            time=time,
-                            channel=DRUMS))
-                    time = 20
+                        Message('note_on', note=snare, velocity=vel, time=time, channel=DRUMS))
                     tracks['drums'].append(
-                        Message(
-                            'note_off',
-                            note=snare,
-                            velocity=0,
-                            time=time,
-                            channel=DRUMS))
-                    time = 0
+                        Message('note_off', note=snare, velocity=0, time=bars_per_beat // 4, channel=DRUMS))
+                    time = bars_per_beat // 2
+                # Hi-hat on all beats
+                vel = 80 + np.random.randint(-10, 10)
+                tracks['drums'].append(
+                    Message('note_on', note=hihat, velocity=vel, time=time, channel=DRUMS))
+                tracks['drums'].append(
+                    Message('note_off', note=hihat, velocity=0, time=bars_per_beat // 8, channel=DRUMS))
+                time = bars_per_beat // 2
 
-                # Shuffle hi-hat
-                tracks['drums'].append(
-                    Message(
-                        'note_on',
-                        note=hihat,
-                        velocity=65,
-                        time=time,
-                        channel=DRUMS))
-                time = bars_per_beat // 3
-                tracks['drums'].append(
-                    Message(
-                        'note_off',
-                        note=hihat,
-                        velocity=0,
-                        time=time,
-                        channel=DRUMS))
-                time = bars_per_beat // 6
-
-                tracks['drums'].append(
-                    Message(
-                        'note_on',
-                        note=hihat,
-                        velocity=45,
-                        time=time,
-                        channel=DRUMS))
-                time = bars_per_beat // 6
-                tracks['drums'].append(
-                    Message(
-                        'note_off',
-                        note=hihat,
-                        velocity=0,
-                        time=time,
-                        channel=DRUMS))
-                time = bars_per_beat // 3
-
-    # Save
-    output_file = OUTPUT_DIR / "liberty_blues_FULL_BAND.mid"
+    # Write MIDI file
+    output_file = OUTPUT_DIR / "liberty_blues_COUNTRY_BAND.mid"
+    # Ensure output directory exists
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     mid.save(str(output_file))
 
     print(f"\n✅ Saved: {output_file}")
     print(f"   {total_bars} bars at {BPM} BPM")
-    print(f"   8 INSTRUMENTS: Lead Guitar, Rhythm Guitar, Organ, Piano,")
-    print(f"                  Bass, Harmonica, Sax, Drums")
+    print(f"   5 INSTRUMENTS: Lead Guitar, Rhythm Guitar, Bass, Brass, Drums")
+    print("\n💡 For realistic playback, use a high-quality country soundfont or virtual instrument.")
+    print("   (General MIDI program numbers are set for each instrument.)")
     print()
     return output_file
 
 
 if __name__ == "__main__":
     create_full_band_midi()
-    print("=" * 70)
-    print("🎉 FULL BAND VERSION READY!")
-    print("=" * 70)
-    print("\n💡 Now run the masterpiece mixer to combine with existing vocals!")

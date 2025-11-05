@@ -7,19 +7,23 @@ import { Observable } from 'rxjs';
  * DTO for music generation request.
  * @property genre Music genre (e.g., 'ambient', 'rock')
  * @property duration Duration in seconds
+ * @property engine Music generation engine (e.g., 'MusicGen', 'Jukebox')
  * @property seed Optional random seed for reproducibility
  * @property engine AI engine to use: 'audiocraft', 'bark', or 'auto'
  */
 export class GenerateMusicDto {
   genre!: string;
   duration!: number;
+  engine?: string; // Accepts any engine string, e.g., 'audiocraft', 'bark', 'auto', 'MusicGen', etc.
+  model?: string;  // Ollama model name, e.g., 'llama3.2'
   seed?: number;
   idea?: string;
   vocal_artist?: string;
   tempo?: number;
   variation?: string;
   songSections?: Array<{ type: string; duration: number; transition?: string }>;
-  engine?: 'audiocraft' | 'bark' | 'auto';
+  lyrics?: string;
+  vocal_style?: string;
 }
 
 
@@ -60,20 +64,21 @@ export class MusicGenController {
    * @returns Observable with waveform and sample rate
    *
    * Example:
-   *   POST /musicgen/generate { genre: 'ambient', duration: 10, seed: 42, engine: 'auto' }
+  *   POST /musicgen/generate { genre: 'ambient', duration: 10, engine: 'MusicGen', seed: 42 }
    */
   @Post('generate')
   generate(@Body() dto: GenerateMusicDto): Observable<MusicGenResult> {
     return this.musicGenService.generateMusic(
       dto.genre,
       dto.duration,
-      dto.seed,
+      dto.engine ?? 'auto',
       dto.idea,
       dto.vocal_artist,
       dto.tempo,
       dto.variation,
       dto.songSections,
-      dto.engine || 'auto'
+      dto.lyrics,
+      dto.vocal_style
     );
   }
 }

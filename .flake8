@@ -1,0 +1,16 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    *.egg-info,
+    .venv,
+    venv,
+    ai-music-gen/ai-music-gen/jukebox,
+    ai-music-gen/libs/musicgen/jukebox,
+    ai-music-gen/jukebox,
+    ai-music-gen/ai-music-gen/jukebox/tensorboardX,
+    ai-music-gen/ai-music-gen/jukebox/jukebox/tensorboardX,
+    ai-music-gen/libs/musicgen/jukebox/tensorboardX
+ignore = E501,F401,E302,E402,E305,W504

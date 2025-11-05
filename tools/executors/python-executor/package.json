@@ -1,0 +1,16 @@
+{
+  "name": "nx-python-executor",
+  "version": "1.0.0",
+  "description": "Custom NX executor for Python tasks",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@nx/devkit": "^22.0.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "@types/node": "20.19.9"
+  }
+}

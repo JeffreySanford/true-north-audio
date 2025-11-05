@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { GenreSchema } from '../models/genre.model';
 import { AudioAssetSchema } from '../models/audio-asset.model';
 import { OlammaLogSchema } from '../models/olamma-log.model';
+import { MusicChatModule } from '../music-chat/music-chat.module';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -41,6 +42,7 @@ const mongooseModule =
       { name: 'AudioAsset', schema: AudioAssetSchema },
       { name: 'OlammaLog', schema: OlammaLogSchema },
     ]),
+    MusicChatModule,
   ],
   controllers: [AppController, MusicGenController, GenreController],
   providers: [AppService, MusicGenService, SeedService, GenreService],

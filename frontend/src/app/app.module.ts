@@ -5,6 +5,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,11 +24,13 @@ import { MainPageComponent } from './main-page';
 import { HeaderComponent } from './header';
 import { FooterComponent } from './footer';
 import { MusicGenMainComponent } from './musicgen-main.component';
+import { MusicgenEngineSelectorComponent } from './musicgen-selector.component';
 
 @NgModule({
-  declarations: [App, MainPageComponent, HeaderComponent, FooterComponent, MusicGenMainComponent],
+  declarations: [App, MainPageComponent, HeaderComponent, FooterComponent, MusicGenMainComponent, MusicgenEngineSelectorComponent],
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
     HttpClientModule,
     MatCardModule,

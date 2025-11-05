@@ -1,0 +1,19 @@
+<div class="musicgen-selector">
+  <mat-form-field appearance="fill">
+    <mat-label>Music Generation Engine</mat-label>
+    <mat-select [(ngModel)]="selectedEngine" (selectionChange)="onEngineChange()">
+      <mat-option *ngFor="let engine of engines" [value]="engine">
+        {{ engine.name }} ({{ engine.creator }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" *ngIf="selectedEngine?.models">
+    <mat-label>Ollama Model</mat-label>
+    <mat-select [(ngModel)]="selectedModel" (selectionChange)="onModelChange()">
+      <mat-option *ngFor="let model of selectedEngine.models" [value]="model">
+        {{ model }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

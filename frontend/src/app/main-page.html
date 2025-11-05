@@ -1,4 +1,3 @@
-
 <div class="main-page-container mat-mdc-elevation-z8">
   <section class="main-content">
     <mat-card class="musicgen-card mat-elevation-z8 animate-fade-in">
@@ -183,6 +182,7 @@
               </div>
             </div>
           </mat-expansion-panel>
+            <app-musicgen-engine-selector (engineChange)="onEngineChange($event)"></app-musicgen-engine-selector>
           <button mat-raised-button color="accent" class="animated-btn animate-bounce" type="submit" [disabled]="loading">
             <mat-icon *ngIf="!loading">music_note</mat-icon>
             <mat-progress-spinner *ngIf="loading" diameter="24" mode="indeterminate" color="primary"></mat-progress-spinner>

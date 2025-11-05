@@ -35,6 +35,7 @@ export class MainPageComponent implements OnInit {
       this.songSections.splice(i, 1);
     }
   }
+
   playMp3() {
     if (this.result?.audio_url) {
       const audioElem = document.getElementById('musicgen-audio') as HTMLAudioElement;
@@ -71,6 +72,7 @@ export class MainPageComponent implements OnInit {
       URL.revokeObjectURL(url);
     }
   }
+
   audioUrlNotFound = false;
   directSource?: AudioBufferSourceNode;
 
@@ -87,10 +89,11 @@ export class MainPageComponent implements OnInit {
   loading = false;
   result?: MusicGenResult;
   error?: string;
+  engine = 'Ollama';
+  model?: string;
 
   private musicGen = inject(MusicGenService);
   private audioPlayer = inject(AudioPlayerService);
-
   ngOnInit() {
     // Check which AI engines are available on the backend
     this.musicGen.checkAvailableEngines().subscribe({
@@ -132,21 +135,27 @@ export class MainPageComponent implements OnInit {
     }
   }
 
+  onEngineChange(data: { engine: string; model?: string }) {
+    this.engine = data.engine;
+    this.model = data.model;
+  }
+
   generateMusic() {
     this.loading = true;
     this.error = undefined;
     this.result = undefined;
-      this.musicGen.generateMusic(
-        this.genre,
-        this.duration,
-        this.seed,
-        this.idea,
-        this.vocal_artist,
-        this.tempo,
-        this.variation,
-        this.songSections,
-        this.selectedEngine  // Pass engine selection to service
-      ).subscribe({
+    this.musicGen.generateMusic(
+      this.genre,
+      this.duration,
+      this.selectedEngine,
+      this.model,
+      this.seed,
+      this.idea,
+      this.vocal_artist,
+      this.tempo,
+      this.variation,
+      this.songSections
+    ).subscribe({
       next: (response) => {
         this.result = response;
         // Set audio player src

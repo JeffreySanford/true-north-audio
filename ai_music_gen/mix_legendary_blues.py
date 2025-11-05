@@ -15,7 +15,8 @@ warnings.filterwarnings('ignore')  # Suppress warnings for cleaner output
 # Paths
 OUTPUT_DIR = Path(__file__).parent.parent / "backend" / \
     "src" / "assets" / "generated"
-MIDI_FILE = OUTPUT_DIR / "liberty_blues_legendary.mid"
+# Use the new country band MIDI file
+MIDI_FILE = OUTPUT_DIR / "liberty_blues_COUNTRY_BAND.mid"
 
 # Vocal files in order
 VOCAL_FILES = [
@@ -186,8 +187,12 @@ def mix_legendary_blues():
     print(f"⏱️  Total duration: {total_bars} bars = {total_duration_ms/1000:.1f}s")
     print()
 
-    # Synthesize MIDI backing track
-    backing_track = synthesize_midi_simple(MIDI_FILE, total_duration_ms)
+    # Use realistic band WAV file rendered by FluidSynth
+    band_wav_path = OUTPUT_DIR / "liberty_blues_COUNTRY_BAND.wav"
+    if not band_wav_path.exists():
+        print(f"❌ Band WAV file not found: {band_wav_path}\nPlease render the MIDI to WAV first.")
+        return
+    backing_track = AudioSegment.from_wav(str(band_wav_path))
 
     # Load and position vocals
     print()

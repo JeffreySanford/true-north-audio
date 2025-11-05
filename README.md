@@ -36,8 +36,25 @@ True North Audio is a local-first, AI-powered music and video asset creator, bui
 
 
 ## Hardware & Deployment
-- Optimized for local use on i7/i9 CPUs, NVIDIA GPUs
-- Easy migration to cloud (DigitalOcean, Docker, etc.)
+
+### Current Development Configuration (November 2025)
+This project is optimized for high-performance local AI music generation:
+- **CPU**: 16+ cores (Intel i9/AMD Ryzen 9 recommended)
+- **RAM**: 32GB+ (64GB recommended for large models)
+- **GPU**: NVIDIA GPU with 8GB+ VRAM (GTX 1080, RTX 3060, RTX 4070+)
+- **Storage**: SSD with 50GB+ free space for models and generated assets
+
+### Supported Deployment Options
+- **Local Development**: Full-featured with GPU acceleration (recommended)
+- **Cloud Hybrid**: Cloud APIs (Suno/Udio) + local processing
+- **Cloud Deployment**: DigitalOcean, Docker, Kubernetes (future)
+
+### AI Music Generation Engines
+1. **Suno AI** (Cloud): Professional quality, 50 songs/day free tier
+2. **Udio AI** (Cloud): Professional quality, 3 songs/day free tier  
+3. **Meta MusicGen** (Local): 100% private, unlimited generations, requires GPU
+
+See [docs/hardware-requirements.md](docs/hardware-requirements.md) for detailed specifications and [docs/ai-integration.md](docs/ai-integration.md) for engine configuration.
 
 
 
@@ -83,9 +100,40 @@ If you see errors about unknown Material elements or `ngModel`, check your modul
 
 
 ## Documentation
-- All endpoints must be documented in `API_ENDPOINTS.md`.
-- See `/docs` for detailed guides on architecture, features, and usage.
-- All new features and endpoints (including multi-section song generation) must be documented and tested before merging.
+
+### Core Documentation
+- **[README.md](README.md)** - This file, project overview and quick start
+- **[API_ENDPOINTS.md](API_ENDPOINTS.md)** - Complete API endpoint reference
+
+### Setup & Migration
+- **[MACHINE-SETUP-CHECKLIST.md](docs/MACHINE-SETUP-CHECKLIST.md)** - Quick and detailed setup guides
+- **[MIGRATION-CHECKLIST.md](docs/MIGRATION-CHECKLIST.md)** - Moving to new hardware
+- **[setup-guide-high-performance.md](docs/setup-guide-high-performance.md)** - High-performance machine setup
+
+### Architecture & Design
+- **[architecture.md](docs/architecture.md)** - System architecture overview
+- **[frontend-architecture.md](docs/frontend-architecture.md)** - Angular frontend design
+- **[backend.md](docs/backend.md)** - NestJS backend architecture
+- **[data-models.md](docs/data-models.md)** - Database schemas and models
+- **[data-flow.md](docs/data-flow.md)** - Data flow and communication
+
+### AI Integration
+- **[ai-integration.md](docs/ai-integration.md)** - Multi-engine AI architecture (Suno, Udio, MusicGen)
+- **[hardware-requirements.md](docs/hardware-requirements.md)** - Hardware specs and GPU configuration
+- **[ollama-engine.md](docs/ollama-engine.md)** - Ollama integration for lyrics generation
+- **[ollama-setup.md](docs/ollama-setup.md)** - Ollama installation and configuration
+
+### Testing
+- **[TESTING-GUIDE.md](docs/TESTING-GUIDE.md)** - Comprehensive testing guide for all engines
+- Run automated tests: `bash scripts/test-all-engines.sh`
+
+### Features & Usage
+- **[features.md](docs/features.md)** - Feature list and roadmap
+- **[user-management.md](docs/user-management.md)** - RBAC and authentication
+- **[video-roadmap.md](docs/video-roadmap.md)** - Video feature planning
+
+### Development Guidelines
+All new features and endpoints (including multi-section song generation) must be documented and tested before merging.
 
 ## Planned Features
 - Multi-section song generation (verse, chorus, bridge, etc.)

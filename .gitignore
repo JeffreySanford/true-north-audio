@@ -76,6 +76,9 @@ test-output
 *.bin
 *.safetensors
 
+# Large soundfont file
+ai_music_gen/FluidR3_GM.sf2
+
 # Logs and temporary files
 logs/
 *.log

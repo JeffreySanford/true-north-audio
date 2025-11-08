@@ -1,21 +1,43 @@
 # Core dependencies for AI Music Generation
-mido>=1.3.0
+ mido==1.2.6
 pydub>=0.25.1
 psutil>=5.9.0
 fastapi>=0.104.0
 uvicorn>=0.24.0
-numpy>=1.24.0,<2.0.0
+numpy==1.24.4  # Audiocraft requires numpy<2.0.0
 autopep8>=2.0.0
 
 # PyTorch and AI/ML
-torch>=2.0.0
-torchaudio>=2.0.0
+
+torch==2.1.0
+torchaudio==2.1.0
+torchvision==0.16.0
 transformers>=4.30.0
 
+# Audiocraft/MusicGen requirements
+ffmpeg-python>=0.2.0
+sentencepiece>=0.1.99
+einops>=0.7.0
+
+
 # Audio processing
-scipy>=1.10.0
-librosa>=0.10.0
+scipy>=1.10.1
+librosa==0.7.2  # audiocraft will use this version
 soundfile>=0.12.0
+
+# Additional dependencies used in codebase
+requests>=2.31.0
+python-dotenv>=1.0.0
+pretty_midi>=0.2.10
+
+# AI Music Generation engines
+suno-bark
+
+# System dependency required for audiocraft/musicgen:
+#   ffmpeg (must be installed and available in PATH)
+
+# For Bark TTS (for vocals)
+#   pip install suno-bark
 
 # For professional AI music generation (install manually):
 # These require git and may take time to download/install
@@ -25,3 +47,23 @@ soundfile>=0.12.0
 #
 # Bark TTS (for vocals):
 #   pip install suno-bark
+
+# --- Audiocraft required dependencies ---
+julius
+protobuf
+hydra-core>=1.1
+hydra_colorlog
+num2words
+pesq
+pystoi
+demucs
+torchdiffeq
+torchmetrics
+
+torchtext==0.16.0
+## (torchvision already pinned above)
+xformers<0.0.23
+gradio
+flashy
+spacy==3.7.6
+ 

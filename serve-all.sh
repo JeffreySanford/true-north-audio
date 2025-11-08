@@ -15,6 +15,14 @@ BACKEND_PID=$!
 
 sleep 5
 
+
+echo "Installing Python dependencies for FastAPI music service..."
+python -m pip install --upgrade pip 2>&1
+python -m pip install torch torchaudio 2>&1
+python -c "import torch; import torchaudio; print('Torch and torchaudio are importable.')" || exit 1
+python -m pip install --no-deps git+https://github.com/facebookresearch/audiocraft 2>&1
+python -m pip install -r ai_music_gen/requirements.txt 2>&1
+
 echo "Starting FastAPI music service..."
 pnpm serve:fastapi &
 FASTAPI_PID=$!

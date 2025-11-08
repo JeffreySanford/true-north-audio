@@ -18,6 +18,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { App } from './app';
 import { MainPageComponent } from './main-page';
@@ -48,7 +49,8 @@ import { MusicgenEngineSelectorComponent } from './musicgen-selector.component';
     MatToolbarModule,
     MatOptionModule,
     MatSlideToggleModule,
-    MatBottomSheetModule
+  MatBottomSheetModule,
+  MatTooltipModule
   ],
   providers: [provideBrowserGlobalErrorListeners()],
   bootstrap: [App],

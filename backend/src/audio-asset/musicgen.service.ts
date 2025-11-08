@@ -47,7 +47,7 @@ export class MusicGenService {
   }> {
     return this.http
       .get<{ audiocraft: boolean; bark: boolean; midi: boolean; recommended: 'audiocraft' | 'bark' | 'auto' }>(
-        'http://localhost:11434/musicgen/engines'
+        'http://localhost:8000/musicgen/engines'
       )
       .pipe(
         map((response) => response.data)
@@ -83,10 +83,10 @@ export class MusicGenService {
     lyrics?: string,
     vocal_style?: string
   ): Observable<MusicGenResult> {
-    // Call Olamma in-memory FastAPI
+    // Call FastAPI musicgen backend
     return this.http
       .post<MusicGenResult>(
-        'http://localhost:11434/musicgen',
+        'http://localhost:8000/musicgen',
         {
           genre,
           duration,

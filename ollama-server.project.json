@@ -1,0 +1,13 @@
+{
+  "name": "ollama-server",
+  "root": ".",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ollama serve"
+      }
+    }
+  }
+}

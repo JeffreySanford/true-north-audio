@@ -32,12 +32,22 @@ True North Audio is a local-first, AI-powered music and video asset creator, bui
 - **Nx Workspace:** Modular, strict boundaries, shared libraries for DTOs/types, robust lint/build/test workflow
 
 
-## Project Structure
-- `/frontend` - Angular UI (Material Design 3, RxJS, vibrant/animated UI)
-- `/backend` - NestJS API server (MongoDB, static file serving, AI integration)
-- `/frontend-e2e` - Playwright E2E tests for frontend
-- `/backend-e2e` - Jest E2E tests for backend
-- `/packages` - (future) Shared libraries for DTOs/types, audio/video logic, data-access, UI components
+
+## Project Structure & Service Map
+
+| Service         | Directory   | Port   | Description                                                      | Connects To                |
+|-----------------|-------------|--------|------------------------------------------------------------------|----------------------------|
+| Frontend        | /frontend   | 4200   | Angular UI (Material, RxJS, vibrant/animated UI)                 | Backend (3000)             |
+| Backend         | /backend    | 3000   | NestJS API server (MongoDB, static files, AI integration)        | FastAPI (11434), MongoDB   |
+| FastAPI MusicGen| /ai_music_gen/musicgen | 11434  | Python FastAPI for AI music generation (MusicGen, Bark, etc.)    | Receives from Backend      |
+| Ollama Proxy    | /libs/musicgen/olamma_api.py | 11434  | Python FastAPI for LLM/lyrics (Ollama)                           | Receives from Backend      |
+| MongoDB         | (in-memory or local) | 27017  | Database for assets, logs, user data                             | Backend                    |
+
+**Connections:**
+- Frontend → Backend → FastAPI (musicgen) → AI engines
+- Backend also connects to Ollama Proxy for lyrics/LLM
+- All logs and generated assets are stored in MongoDB
+
 
 
 ## Coding Standards & Workflow

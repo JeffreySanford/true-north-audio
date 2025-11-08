@@ -7,6 +7,7 @@ export interface MusicGenResult {
   sample_rate: number;
   vocals?: string;
   audio_url?: string;
+  wav_url?: string;
   engine?: 'audiocraft' | 'bark' | 'midi';  // Which engine was used
   generation_time?: number;  // Time taken in seconds
   model_info?: string;  // Model details

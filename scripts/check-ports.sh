@@ -27,7 +27,8 @@ ALL_FREE=0
 check_port 3000 "Backend" || ALL_FREE=1
 check_port 4200 "Frontend" || ALL_FREE=1
 check_port 8000 "FastAPI" || ALL_FREE=1
-check_port 11434 "Ollama" || ALL_FREE=1
+# Ollama (11434) is allowed to be active; do not set ALL_FREE=1 for it
+check_port 11434 "Ollama"
 
 # Check for MongoDB Memory Server processes
 MONGO_PROCESSES=$(ps aux 2>/dev/null | grep -i mongod | grep -v grep | wc -l)

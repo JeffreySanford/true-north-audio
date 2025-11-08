@@ -1,1 +1,0 @@
-2025-10-31T02:00:36.578Z - INFO - MusicGen: genre=ambient, duration=10, seed=undefined, idea=undefined, vocal_artist=none, tempo=120, variation=original, songSections=[{"type":"verse","duration":16,"transition":"none"},{"type":"chorus","duration":16,"transition":"none"}], audioUrl=/audio/generated/ambient_none_431696.mp3, error=null

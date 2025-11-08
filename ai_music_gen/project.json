@@ -1,0 +1,14 @@
+{
+  "name": "ai_music_gen",
+  "root": "ai_music_gen",
+  "projectType": "application",
+  "targets": {
+    "serve": {
+      "executor": "nx:run-commands",
+      "options": {
+  "command": "set PYTHONPATH=libs && python libs/musicgen/api.py",
+  "cwd": "."
+      }
+    }
+  }
+}

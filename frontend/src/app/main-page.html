@@ -1,3 +1,13 @@
+<!-- Generating Dialog Overlay -->
+<div *ngIf="loading" class="generating-overlay">
+  <div class="generating-dialog">
+    <mat-progress-spinner diameter="48" mode="indeterminate" color="accent"></mat-progress-spinner>
+    <div class="generating-text">
+      <span class="animated-dots">Generating<span>.</span><span>.</span><span>.</span></span>
+      <div style="margin-top: 0.5em; color: #888; font-size: 0.95em;">This may take up to a minute for long songs.</div>
+    </div>
+  </div>
+</div>
 <div class="main-page-container mat-mdc-elevation-z8">
   <section class="main-content">
     <mat-card class="musicgen-card mat-elevation-z8 animate-fade-in">
@@ -16,7 +26,10 @@
             AI Engine
           </h3>
           <mat-radio-group [(ngModel)]="selectedEngine" name="engine" style="display: flex; flex-direction: column; gap: 1em;">
-            <mat-radio-button value="auto" color="accent">
+            <button mat-stroked-button color="primary" type="button" style="margin-bottom: 1em; align-self: flex-start;" (click)="recheckEngines()">
+              <mat-icon>refresh</mat-icon> Check Requirements
+            </button>
+            <mat-radio-button value="auto" color="accent" matTooltip="{{ getEngineDescription('auto') }}">
               <div style="display: flex; flex-direction: column;">
                 <strong>{{ getEngineDisplayName('auto') }}</strong>
                 <small style="color: #888;">{{ getEngineDescription('auto') }}</small>
@@ -26,7 +39,7 @@
                 </small>
               </div>
             </mat-radio-button>
-            <mat-radio-button value="audiocraft" [disabled]="!availableEngines.audiocraft" color="accent">
+            <mat-radio-button value="audiocraft" [disabled]="!availableEngines.audiocraft" color="accent" matTooltip="{{ getEngineDescription('audiocraft') }}">
               <div style="display: flex; flex-direction: column;">
                 <strong>{{ getEngineDisplayName('audiocraft') }}</strong>
                 <small style="color: #888;">{{ getEngineDescription('audiocraft') }}</small>
@@ -40,7 +53,7 @@
                 </small>
               </div>
             </mat-radio-button>
-            <mat-radio-button value="bark" [disabled]="!availableEngines.bark" color="accent">
+            <mat-radio-button value="bark" [disabled]="!availableEngines.bark" color="accent" matTooltip="{{ getEngineDescription('bark') }}">
               <div style="display: flex; flex-direction: column;">
                 <strong>{{ getEngineDisplayName('bark') }}</strong>
                 <small style="color: #888;">{{ getEngineDescription('bark') }}</small>
@@ -57,6 +70,19 @@
           </mat-radio-group>
         </div>
 
+        <!-- Model selection dropdown -->
+        <div *ngIf="selectedEngine === 'audiocraft' || selectedEngine === 'bark'" style="margin-bottom: 1em;">
+          <mat-form-field appearance="outline" color="accent" style="width: 100%;">
+            <mat-label>Model</mat-label>
+            <mat-select [(ngModel)]="model" name="model">
+              <mat-option value="llama3.2">Llama 3.2</mat-option>
+              <mat-option value="musicgen-medium">MusicGen Medium</mat-option>
+              <mat-option value="musicgen-melody">MusicGen Melody</mat-option>
+              <mat-option value="bark-base">Bark Base</mat-option>
+              <mat-option value="bark-large">Bark Large</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
         <form class="musicgen-form" (ngSubmit)="generateMusic()">
           <div style="display: flex; gap: 1em; margin-top: 1em;">
             <mat-form-field appearance="outline" color="accent" style="flex: 1;" class="genre-dropdown">
@@ -190,7 +216,7 @@
           </button>
         </form>
         <mat-divider></mat-divider>
-        <div *ngIf="result" class="result-card animate-slide-in">
+  <div *ngIf="result && !loading" class="result-card animate-slide-in">
           <mat-icon color="primary">check_circle</mat-icon>
           <span class="result-title">Music generated!</span>
           
@@ -211,7 +237,7 @@
           <div class="result-details">
             <span><mat-icon color="primary">speed</mat-icon> Sample rate: <strong>{{ result.sample_rate }}</strong></span>
             <span><mat-icon color="accent">graphic_eq</mat-icon> Waveform (base64): <span class="waveform-preview">{{ result.waveform | slice:0:32 }}...</span></span>
-            <span *ngIf="result.audio_url">
+            <span *ngIf="result.audio_url && !audioUrlNotFound && !isPlaceholderMp3(result.audio_url)">
               <mat-icon color="primary">library_music</mat-icon>
               <button mat-stroked-button color="primary" (click)="playMp3()">
                 <mat-icon>play_arrow</mat-icon> Listen MP3

@@ -26,6 +26,32 @@ export class MainPageComponent implements OnInit {
     { type: 'chorus', duration: 16, transition: 'none' }
   ];
 
+  isPlaceholderMp3(url: string): boolean {
+  return url.includes('unknown_multi_section.mp3') || url.includes('ambient_none_0.mp3');
+}
+
+  recheckEngines() {
+    this.enginesLoaded = false;
+    this.musicGen.checkAvailableEngines().subscribe({
+      next: (engines) => {
+        this.availableEngines = engines;
+        this.selectedEngine = engines.recommended;
+        this.enginesLoaded = true;
+        console.log('Available AI engines:', engines);
+      },
+      error: (err) => {
+        console.error('Failed to check available engines:', err);
+        this.enginesLoaded = true;
+        this.availableEngines = {
+          audiocraft: false,
+          bark: false,
+          midi: true,
+          recommended: 'auto'
+        };
+      }
+    });
+  }
+
   addSection() {
     this.songSections.push({ type: 'verse', duration: 8, transition: 'none' });
   }
@@ -48,8 +74,14 @@ export class MainPageComponent implements OnInit {
   }
 
   playWav() {
-    if (this.result?.waveform && this.result?.sample_rate) {
-      const audioElem = document.getElementById('musicgen-audio') as HTMLAudioElement;
+    const audioElem = document.getElementById('musicgen-audio') as HTMLAudioElement;
+    if (this.result?.wav_url && !this.audioUrlNotFound) {
+      if (audioElem) {
+        audioElem.src = this.result.wav_url;
+        audioElem.load();
+        audioElem.play();
+      }
+    } else if (this.result?.waveform && this.result?.sample_rate) {
       if (audioElem) {
         const wavBlob = this.audioPlayer.base64ToWavBlob(this.result.waveform, this.result.sample_rate);
         audioElem.src = URL.createObjectURL(wavBlob);
@@ -60,7 +92,14 @@ export class MainPageComponent implements OnInit {
   }
 
   downloadWav() {
-    if (this.result?.waveform && this.result?.sample_rate) {
+    if (this.result?.wav_url && !this.audioUrlNotFound) {
+      const a = document.createElement('a');
+      a.href = this.result.wav_url;
+      a.download = 'musicgen.wav';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else if (this.result?.waveform && this.result?.sample_rate) {
       const wavBlob = this.audioPlayer.base64ToWavBlob(this.result.waveform, this.result.sample_rate);
       const url = URL.createObjectURL(wavBlob);
       const a = document.createElement('a');
@@ -144,6 +183,28 @@ export class MainPageComponent implements OnInit {
     this.loading = true;
     this.error = undefined;
     this.result = undefined;
+    console.log('[MusicGen] Starting music generation...');
+    // Clear vocals output
+    const vocalsElem = document.getElementById('vocals-output');
+    if (vocalsElem) vocalsElem.textContent = '(No vocals yet)';
+    // Clear audio element
+    const audioElem = document.getElementById('musicgen-audio') as HTMLAudioElement;
+    if (audioElem) {
+      audioElem.src = '';
+      audioElem.load();
+    }
+    console.info('[MusicGen] Sending request:', {
+      genre: this.genre,
+      duration: this.duration,
+      engine: this.selectedEngine,
+      model: this.model,
+      seed: this.seed,
+      idea: this.idea,
+      vocal_artist: this.vocal_artist,
+      tempo: this.tempo,
+      variation: this.variation,
+      songSections: this.songSections
+    });
     this.musicGen.generateMusic(
       this.genre,
       this.duration,
@@ -157,40 +218,52 @@ export class MainPageComponent implements OnInit {
       this.songSections
     ).subscribe({
       next: (response) => {
+        console.log('[MusicGen] Response received:', response);
         this.result = response;
         // Set audio player src
         if (response && response.waveform) {
+          console.info('[MusicGen] Setting audio player waveform...');
           const audioElem = document.getElementById('musicgen-audio') as HTMLAudioElement;
           if (audioElem) {
             const wavBlob = this.audioPlayer.base64ToWavBlob(response.waveform, response.sample_rate);
             audioElem.src = URL.createObjectURL(wavBlob);
             audioElem.load();
             audioElem.play();
+            console.info('[MusicGen] Audio playback started.');
           }
+        } else {
+          console.warn('[MusicGen] No waveform found in response.');
         }
         // Check if audio_url file exists
         this.audioUrlNotFound = false;
         if (response && response.audio_url) {
+          console.info('[MusicGen] Checking audio_url:', response.audio_url);
           fetch(response.audio_url)
             .then(res => {
               if (!res.ok) {
                 this.audioUrlNotFound = true;
+                console.error('[MusicGen] MP3 file not found at', response.audio_url);
+              } else {
+                console.info('[MusicGen] MP3 file found at', response.audio_url);
               }
             })
-            .catch(() => {
+            .catch((err) => {
               this.audioUrlNotFound = true;
+              console.error('[MusicGen] Error fetching MP3:', err);
             });
         }
         // Set vocals transcription
-        const vocalsElem = document.getElementById('vocals-output');
         if (vocalsElem && response && response.vocals) {
           vocalsElem.textContent = response.vocals;
+          console.info('[MusicGen] Vocals transcription set.');
         }
         this.loading = false;
+        console.log('[MusicGen] Generation complete.');
       },
       error: (err) => {
         this.error = err?.message || 'Failed to generate music.';
         this.loading = false;
+        console.error('[MusicGen] Error during generation:', err);
       }
     });
   }

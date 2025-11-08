@@ -9,7 +9,7 @@ autopep8>=2.0.0
 
 # PyTorch and AI/ML
 
-torch==2.1.0
+torch==2.8.0
 torchaudio==2.1.0
 torchvision==0.16.0
 transformers>=4.30.0
